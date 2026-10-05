@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  mahagov-pulse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mahagov_pulse_app
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend/mahagov_pulse.db:/app/backend/mahagov_pulse.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3

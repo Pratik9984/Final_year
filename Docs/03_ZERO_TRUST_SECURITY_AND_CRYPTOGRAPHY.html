@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03 Zero-Trust Security & Cryptography | GovPulse Technical Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mermaid CDN for crisp vector diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#111827',
+                primaryColor: '#0c8fe9',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#025aa1',
+                lineColor: '#38bdf8',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #0c8fe9;
+            --primary-dark: #025aa1;
+            --accent: #10b981;
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-card: #182234;
+            --border: #233249;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, #072949 0%, #111827 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            color: #38bdf8;
+            margin: 0 0 8px 0;
+        }
+
+        .doc-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(12, 143, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(12, 143, 233, 0.4);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .print-btn {
+            background: #0c8fe9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .print-btn:hover { background: #025aa1; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: #f9fafb;
+        }
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+            color: #38bdf8;
+        }
+        h3 { margin-top: 24px; color: #7dd3fc; }
+
+        p, li { color: #d1d5db; font-size: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        th {
+            background: #182234;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        code:not(pre code) {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mermaid {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        blockquote {
+            border-left: 4px solid #0c8fe9;
+            background: rgba(12, 143, 233, 0.08);
+            margin: 16px 0;
+            padding: 12px 20px;
+            border-radius: 0 8px 8px 0;
+            color: #bae0fd;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #111827 !important;
+            }
+            .print-btn { display: none !important; }
+            .page-container { max-width: 100% !important; padding: 0 !important; }
+            .doc-header {
+                background: #f0f7ff !important;
+                border: 1px solid #bae0fd !important;
+                box-shadow: none !important;
+            }
+            .doc-header h1 { color: #025aa1 !important; }
+            .doc-header p { color: #4b5563 !important; }
+            h1, h2, h3, h4 { color: #0b416f !important; }
+            h2 { border-bottom: 2px solid #025aa1 !important; }
+            p, li { color: #1f2937 !important; }
+            table { background: #ffffff !important; border: 1px solid #d1d5db !important; }
+            th { background: #e0effe !important; color: #0b416f !important; }
+            td { border-bottom: 1px solid #e5e7eb !important; color: #1f2937 !important; }
+            pre { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
+            code:not(pre code) { background: #f1f5f9 !important; color: #0369a1 !important; }
+            .mermaid { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+            blockquote { background: #eff6ff !important; border-left: 4px solid #0284c7 !important; color: #1e3a8a !important; }
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="doc-header">
+            <div>
+                <span class="badge">Government Enterprise Specification</span>
+                <h1>03 Zero-Trust Security & Cryptography</h1>
+                <p>NIST SP 800-207, HSM Signatures & Blockchain • GovPulse Technical Architecture Suite • Version 1.0 (Production)</p>
+            </div>
+            <div>
+                <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+            </div>
+        </div>
+        <div class="content">
+            <h1>Zero-Trust Security, Cryptography & Blockchain Architecture</h1>
+<h2>Project: GovPulse Autonomous Digital Government Platform</h2>
+
+<p>---</p>
+
+<h2>1. Zero-Trust Security Framework (NIST SP 800-207)</h2>
+
+<p>GovPulse treats all networks, internal microservices, and external clients as inherently hostile. Every interaction requires <strong>explicit authentication, granular authorization, and end-to-end cryptographic integrity</strong>.</p>
+
+<div class="mermaid">
+flowchart TD
+    subgraph ZeroTrustPerimeter["ZERO-TRUST SECURITY BOUNDARY"]
+        Client[Client Request\nCitizen / Officer] -->|TLS 1.3 + FIDO2 / WebAuthn| WAF[Enterprise WAF / DDoS Guard]
+        WAF -->|mTLS| Gateway[Envoy API Gateway]
+        Gateway -->|Verify JWT / SVID| AuthEngine[Auth & Policy Enforcement Engine\nOIDC + ABAC]
+        AuthEngine -->|Allow / Deny| Interceptor[mTLS Interceptor]
+        Interceptor -->|Secure gRPC with Spiffe ID| Service[Isolated Python Microservice]
+    end
+
+    subgraph KMSVault["HARDWARE SECURITY & KEY MANAGEMENT"]
+        Vault[HashiCorp Vault KMS] -->|Rotate DEK / KEK| Storage[(MinIO AES-256 Storage)]
+        HSM[(Hardware Security Module / PKCS#11)] -->|Root CA & Officer Private Keys| Service
+    end
+</div>
+
+<p>---</p>
+
+<h2>2. Cryptographic Protocols & Mathematical Formulations</h2>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                               CRYPTOGRAPHIC PRIMITIVES SUMMARY                          │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1. Document Hashing: SHA-256 (NIST FIPS 180-4)                                          │
+│ 2. Payload Encryption at Rest: AES-256-GCM (Envelope Encryption via Vault KMS)          │
+│ 3. Digital Signatures: ECDSA with curve SECP256R1 / Ed25519 (RFC 8032)                  │
+│ 4. Blockchain Proofs: SHA-256 Merkle Trees &amp; State Hash Commitments                     │
+│ 5. Public Credential Standard: W3C Verifiable Credentials v2.0 with JSON Web Signatures │
+└─────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+<h3>1. Client-Side Document Fingerprinting</h3>
+<p>Before binary upload, the client computes the immutable document hash:</p>
+<p>$$H_{\text{doc}} = \text{SHA-256}(\text{RawFileBytes})$$</p>
+
+<h3>2. Envelope Encryption Formulation (AES-256-GCM)</h3>
+<p>For every document $D$:</p>
+<p>1. Vault KMS generates a unique Data Encryption Key (DEK).</p>
+<p>2. The document is encrypted:</p>
+<p>$$\text{Ciphertext}, \text{AuthTag} = \text{AES-256-GCM}_{DEK}(D, \text{IV}, \text{AAD})$$</p>
+   <em>(where AAD includes ApplicationID and CitizenID for cryptographic binding).</em>
+<p>3. The DEK is encrypted with the Master Key Encryption Key (KEK):</p>
+<p>$$E_{\text{DEK}} = \text{AES-256-GCM}_{KEK}(DEK)$$</p>
+<p>4. MinIO stores $\{\text{Ciphertext}, \text{AuthTag}, \text{IV}, E_{\text{DEK}}\}$.</p>
+
+<h3>3. Officer Digital Signature (ECDSA / Ed25519)</h3>
+<p>The responsible officer approves by signing the Canonical Certificate Payload:</p>
+<p>$$\text{Payload} = \text{CanonicalJSON}(\text{CertID}, H_{\text{doc}}, \text{CitizenIdentityHash}, \text{EligibilityState}, \text{Timestamp})$$</p>
+<p>$$\text{Sig}_{\text{officer}} = \text{Sign}_{SK_{\text{officer}}}(\text{SHA-256}(\text{Payload}))$$</p>
+
+<h3>4. Blockchain State Hash Commitment</h3>
+<p>The state committed to the permissioned blockchain ledger is defined as:</p>
+<p>$$H_{\text{state}} = \text{SHA-256}(\text{CertID} \parallel H_{\text{doc}} \parallel \text{OfficerPKIFingerprint} \parallel \text{Sig}_{\text{officer}} \parallel \text{Timestamp} \parallel \text{Status})$$</p>
+
+<p>---</p>
+
+<h2>3. Permissioned Blockchain Consortium Architecture</h2>
+
+<p>GovPulse operates on a <strong>Permissioned Consortium Ledger</strong> (Hyperledger Fabric v2.5). Unlike public blockchains, there are <strong>zero transaction gas fees</strong>, complete privacy isolation across channels, and guaranteed sub-second finality.</p>
+
+<div class="mermaid">
+graph TD
+    subgraph ConsortiumOrgs["CONSORTIUM PARTICIPATING ORGANIZATIONS"]
+        Org1[Department of Revenue\nPeer Node 1 & 2]
+        Org2[Ministry of Digital Affairs\nPeer Node 3 & 4]
+        Org3[Anti-Corruption Bureau\nAudit Peer Node]
+    end
+
+    subgraph OrdererCluster["RAFT CONSENSUS ORDERING SERVICE"]
+        Orderer1[Orderer 1]
+        Orderer2[Orderer 2]
+        Orderer3[Orderer 3]
+    end
+
+    subgraph Channel["PRIVATE CHANNEL: cert-registry-channel"]
+        SmartContract[Smart Contract / Chaincode:\nCertificateRegistry.go]
+        WorldState[(World State DB:\nCouchDB)]
+        BlockLedger[(Blockchain Append-Only Log)]
+    end
+
+    Org1 --> Channel
+    Org2 --> Channel
+    Org3 --> Channel
+    OrdererCluster --> Channel
+    Channel --> WorldState
+    Channel --> BlockLedger
+</div>
+
+<h3>Endorsement Policy:</h3>
+<p>$$\text{Policy} = \text{OutOf}(2, \text{Org1.Peer}, \text{Org2.Peer}) \land \text{Org3.AuditPeer}$$</p>
+<p>A certificate state block is only committed if endorsed by the issuing department, the central digital authority, and logged by the anti-corruption auditor peer.</p>
+
+<p>---</p>
+
+<h2>4. W3C Verifiable Credential & QR Code Architecture</h2>
+
+<p>When a certificate is approved, GovPulse mints a <strong>W3C-compliant Verifiable Credential</strong>:</p>
+
+<pre><code class="language-json">{
+  &quot;@context&quot;: [
+    &quot;https://www.w3.org/2018/credentials/v1&quot;,
+    &quot;https://schema.gov.org/certificates/v1&quot;
+  ],
+  &quot;id&quot;: &quot;urn:uuid:govpulse-cert-883921-2026&quot;,
+  &quot;type&quot;: [&quot;VerifiableCredential&quot;, &quot;GovernmentIncomeAndAssetCertificate&quot;],
+  &quot;issuer&quot;: &quot;did:gov:revenue-department:karnataka&quot;,
+  &quot;issuanceDate&quot;: &quot;2026-08-28T03:00:00Z&quot;,
+  &quot;expirationDate&quot;: &quot;2027-08-28T03:00:00Z&quot;,
+  &quot;credentialSubject&quot;: {
+    &quot;id&quot;: &quot;did:gov:citizen:8c9d0e1f2a3b4c5d&quot;,
+    &quot;certificateNumber&quot;: &quot;GOV-2026-INC-883921&quot;,
+    &quot;category&quot;: &quot;INCOME_AND_ASSET&quot;,
+    &quot;certifiedAnnualIncome&quot;: &quot;₹1,80,000&quot;,
+    &quot;issuingDistrict&quot;: &quot;Bangalore Urban&quot;,
+    &quot;responsibleOfficer&quot;: &quot;OFFICER-REV-4091&quot;
+  },
+  &quot;evidence&quot;: [{
+    &quot;id&quot;: &quot;urn:evidence:doc-sha256-4a5c6e8d&quot;,
+    &quot;type&quot;: [&quot;DocumentVerificationProof&quot;],
+    &quot;documentHash&quot;: &quot;4a5c6e8d7f9a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c&quot;
+  }],
+  &quot;proof&quot;: {
+    &quot;type&quot;: &quot;JsonWebSignature2020&quot;,
+    &quot;created&quot;: &quot;2026-08-28T03:00:00Z&quot;,
+    &quot;proofPurpose&quot;: &quot;assertionMethod&quot;,
+    &quot;verificationMethod&quot;: &quot;did:gov:officers:OFFICER-REV-4091#key-1&quot;,
+    &quot;blockchainTx&quot;: &quot;0x9f83a27b1c4e09d8e7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4&quot;,
+    &quot;jws&quot;: &quot;eyJhbGciOiJFUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOls...yG&quot;
+  }
+}</code></pre>
+
+<p>---</p>
+
+<h2>5. Public Zero-Knowledge & Instant QR Verification Protocol</h2>
+
+<p>Third-party verifiers (universities, employers, embassies, banks) verify certificates in <strong>< 800 milliseconds</strong> without accessing citizen private data.</p>
+
+<div class="mermaid">
+sequenceDiagram
+    actor V as Third-Party Verifier (Bank / University)
+    participant QR as Scanned QR / PDF Upload
+    participant Portal as GovPulse Public Verifier
+    participant Ledger as Permissioned Blockchain Node
+
+    V->>QR: Scans Dynamic QR Code on Certificate
+    QR->>Portal: Decodes URL: /verify?certId=GOV-2026-INC-883921&proof=...
+    Portal->>Ledger: Query State Hash (CertID)
+    Ledger-->>Portal: Return State Record {H_doc, OfficerSig, BlockNum, Status: VALID}
+    Portal->>Portal: 1. Validate Officer Public Key against Gov PKI Registry
+    Portal->>Portal: 2. Verify ECDSA Signature over Payload
+    Portal->>Portal: 3. Verify Status == "VALID" (Not Revoked)
+    Portal-->>V: ✅ DISPLAY: 100% Cryptographically Verified Official Certificate
+</div>
+
+<p>---</p>
+
+<h2>6. STRIDE Threat Model & Security Defense Matrix</h2>
+
+<table><thead><tr>
+<th>Threat Category</th>
+<th>Potential Threat Scenario</th>
+<th>GovPulse Cryptographic Defense</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Spoofing (Identity)</strong></td>
+<td>Fraudster attempts to submit an application using another citizen's stolen ID card.</td>
+<td>WebAuthn/FIDO2 hardware biometric token + ArcFace cosine similarity check (threshold > 0.95) against live camera selfie and national registry.</td>
+</tr>
+<tr>
+<td><strong>Tampering (Data)</strong></td>
+<td>Corrupt insider alters the income amount in the database from ₹5,00,000 to ₹1,50,000.</td>
+<td>Immediate detection: Hash mismatch between modified DB record and the immutable $H_{\text{state}}$ committed on the blockchain ledger.</td>
+</tr>
+<tr>
+<td><strong>Repudiation (Officer)</strong></td>
+<td>Officer denies approving an unauthorized certificate.</td>
+<td>Non-repudiation guaranteed by officer's Hardware Security Module (HSM) ECDSA signature anchored in the blockchain block.</td>
+</tr>
+<tr>
+<td><strong>Information Disclosure</strong></td>
+<td>Hacker breaches database to dump citizen tax and income records.</td>
+<td>All PII is stored encrypted with AES-256-GCM. Zero PII exists on-chain. Decryption requires per-tenant KMS keys protected by ABAC.</td>
+</tr>
+<tr>
+<td><strong>Denial of Service</strong></td>
+<td>Botnet floods the portal with fake certificate applications.</td>
+<td>Cloudflare WAF + Envoy dynamic token bucket rate limiting (10 req/min per citizen IP) + Proof-of-Work challenge.</td>
+</tr>
+<tr>
+<td><strong>Elevation of Privilege</strong></td>
+<td>Clerk attempts to approve applications reserved for a Gazetted Officer.</td>
+<td>Smart contract validates the signer's X.509 certificate role attribute (<code>Role: GAZETTED_OFFICER</code>) before committing the transaction.</td>
+</tr>
+</tbody></table>
+        </div>
+    </div>
+</body>
+</html>

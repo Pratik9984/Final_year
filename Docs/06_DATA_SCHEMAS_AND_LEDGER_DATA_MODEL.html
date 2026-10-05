@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06 Data Schemas & Ledger Models | GovPulse Technical Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mermaid CDN for crisp vector diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#111827',
+                primaryColor: '#0c8fe9',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#025aa1',
+                lineColor: '#38bdf8',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #0c8fe9;
+            --primary-dark: #025aa1;
+            --accent: #10b981;
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-card: #182234;
+            --border: #233249;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, #072949 0%, #111827 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            color: #38bdf8;
+            margin: 0 0 8px 0;
+        }
+
+        .doc-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(12, 143, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(12, 143, 233, 0.4);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .print-btn {
+            background: #0c8fe9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .print-btn:hover { background: #025aa1; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: #f9fafb;
+        }
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+            color: #38bdf8;
+        }
+        h3 { margin-top: 24px; color: #7dd3fc; }
+
+        p, li { color: #d1d5db; font-size: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        th {
+            background: #182234;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        code:not(pre code) {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mermaid {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        blockquote {
+            border-left: 4px solid #0c8fe9;
+            background: rgba(12, 143, 233, 0.08);
+            margin: 16px 0;
+            padding: 12px 20px;
+            border-radius: 0 8px 8px 0;
+            color: #bae0fd;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #111827 !important;
+            }
+            .print-btn { display: none !important; }
+            .page-container { max-width: 100% !important; padding: 0 !important; }
+            .doc-header {
+                background: #f0f7ff !important;
+                border: 1px solid #bae0fd !important;
+                box-shadow: none !important;
+            }
+            .doc-header h1 { color: #025aa1 !important; }
+            .doc-header p { color: #4b5563 !important; }
+            h1, h2, h3, h4 { color: #0b416f !important; }
+            h2 { border-bottom: 2px solid #025aa1 !important; }
+            p, li { color: #1f2937 !important; }
+            table { background: #ffffff !important; border: 1px solid #d1d5db !important; }
+            th { background: #e0effe !important; color: #0b416f !important; }
+            td { border-bottom: 1px solid #e5e7eb !important; color: #1f2937 !important; }
+            pre { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
+            code:not(pre code) { background: #f1f5f9 !important; color: #0369a1 !important; }
+            .mermaid { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+            blockquote { background: #eff6ff !important; border-left: 4px solid #0284c7 !important; color: #1e3a8a !important; }
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="doc-header">
+            <div>
+                <span class="badge">Government Enterprise Specification</span>
+                <h1>06 Data Schemas & Ledger Models</h1>
+                <p>PostgreSQL DDL, Go Chaincode & Pydantic Contracts • GovPulse Technical Architecture Suite • Version 1.0 (Production)</p>
+            </div>
+            <div>
+                <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+            </div>
+        </div>
+        <div class="content">
+            <h1>Data Schemas, Ledger Data Models & API Contracts</h1>
+<h2>Project: GovPulse Autonomous Digital Government Platform</h2>
+
+<p>---</p>
+
+<h2>1. PostgreSQL Relational Data Schemas (DDL with Row-Level Security)</h2>
+
+<pre><code class="language-sql">-- Enable UUID and Cryptographic Extensions
+CREATE EXTENSION IF NOT EXISTS &quot;uuid-ossp&quot;;
+CREATE EXTENSION IF NOT EXISTS &quot;pgcrypto&quot;;
+
+-- 1. Citizens Identity Table (Encrypted at Rest)
+CREATE TABLE citizens (
+    citizen_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    national_identity_hash VARCHAR(64) UNIQUE NOT NULL, -- SHA-256(Aadhaar/NationalID)
+    full_name_encrypted BYTEA NOT NULL,                 -- AES-256-GCM Encrypted
+    dob_encrypted BYTEA NOT NULL,
+    address_encrypted BYTEA NOT NULL,
+    phone_hash VARCHAR(64) NOT NULL,
+    biometric_embedding_id VARCHAR(64),                 -- Qdrant Vector Point ID
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Officers Registry Table
+CREATE TABLE officers (
+    officer_id VARCHAR(32) PRIMARY KEY,
+    full_name VARCHAR(128) NOT NULL,
+    department VARCHAR(64) NOT NULL,
+    jurisdiction_district VARCHAR(64) NOT NULL,
+    cadre_rank VARCHAR(32) NOT NULL,                    -- e.g., &quot;GAZETTED_OFFICER_GRADE_1&quot;
+    pki_public_key TEXT NOT NULL,                       -- ECDSA Public Key (X.509 PEM)
+    active_caseload INT DEFAULT 0,
+    max_caseload INT DEFAULT 50,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 3. Applications Table
+CREATE TABLE applications (
+    application_id VARCHAR(64) PRIMARY KEY,             -- e.g., &quot;APP-2026-INC-883921&quot;
+    citizen_id UUID REFERENCES citizens(citizen_id),
+    certificate_type VARCHAR(64) NOT NULL,              -- &quot;INCOME_AND_ASSET&quot;, &quot;DOMICILE&quot;, etc.
+    status VARCHAR(32) NOT NULL,                        -- &quot;INTAKE&quot;, &quot;AI_PROCESSING&quot;, &quot;OFFICER_REVIEW&quot;, &quot;ISSUED&quot;, &quot;REJECTED&quot;
+    client_document_sha256 VARCHAR(64) NOT NULL,
+    minio_object_path VARCHAR(256) NOT NULL,
+    assigned_officer_id VARCHAR(32) REFERENCES officers(officer_id),
+    sla_escrow_deadline TIMESTAMP WITH TIME ZONE NOT NULL,
+    sla_escalated BOOLEAN DEFAULT FALSE,
+    fraud_risk_score NUMERIC(5,4),                      -- 0.0000 to 1.0000
+    opa_policy_evaluation JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 4. Immutable Audit Log Table
+CREATE TABLE immutable_audit_trail (
+    audit_id BIGSERIAL PRIMARY KEY,
+    application_id VARCHAR(64) NOT NULL,
+    actor_id VARCHAR(64) NOT NULL,                      -- CitizenID, OfficerID, or &quot;SYSTEM_AI_AGENT&quot;
+    action_type VARCHAR(64) NOT NULL,                   -- &quot;SUBMIT&quot;, &quot;OCR_EXTRACT&quot;, &quot;OPA_PASS&quot;, &quot;BLIND_ASSIGN&quot;, &quot;OFFICER_SIGN&quot;, &quot;BLOCK_MINT&quot;
+    action_payload_hash VARCHAR(64) NOT NULL,           -- SHA-256(Action_Data)
+    ip_address_hash VARCHAR(64),
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Row-Level Security (RLS) Policy Example:
+-- Officers can ONLY view applications assigned to their specific officer_id in their jurisdiction
+ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY officer_assigned_applications_only
+    ON applications
+    FOR SELECT
+    USING (assigned_officer_id = current_setting(&#x27;request.jwt.officer_id&#x27;, true));</code></pre>
+
+<p>---</p>
+
+<h2>2. Permissioned Blockchain Ledger Data Structures (Go Chaincode)</h2>
+
+<pre><code class="language-go">package main
+
+import &quot;time&quot;
+
+// CertificateState represents the on-chain immutable proof commitment
+type CertificateState struct {
+    CertificateID        string    `json:&quot;certificate_id&quot;`        // &quot;GOV-2026-INC-883921&quot;
+    CertificateType      string    `json:&quot;certificate_type&quot;`      // &quot;INCOME_AND_ASSET&quot;
+    StateHash            string    `json:&quot;state_hash&quot;`            // SHA-256(CertID || DocHash || Sig || Time)
+    DocumentSHA256       string    `json:&quot;document_sha256&quot;`       // Client-side raw doc hash
+    CitizenIdentityHash  string    `json:&quot;citizen_identity_hash&quot;` // SHA-256(NationalID) - Zero PII
+    IssuerOfficerID      string    `json:&quot;issuer_officer_id&quot;`     // &quot;OFFICER-REV-4091&quot;
+    IssuerPKIFingerprint string    `json:&quot;issuer_pki_fingerprint&quot;`// SHA-256(Officer X.509 Cert)
+    OfficerDigitalSig    string    `json:&quot;officer_digital_sig&quot;`   // ECDSA Base64 Signature
+    Status               string    `json:&quot;status&quot;`                // &quot;VALID&quot; or &quot;REVOKED&quot;
+    IssuedTimestamp      time.Time `json:&quot;issued_timestamp&quot;`
+    BlockNumber          uint64    `json:&quot;block_number&quot;`
+    MerkleRoot           string    `json:&quot;merkle_root&quot;`
+}
+
+// CertificateRevocationEvent logs immutable revocation
+type CertificateRevocationEvent struct {
+    CertificateID   string    `json:&quot;certificate_id&quot;`
+    RevokedByOfficer string   `json:&quot;revoked_by_officer&quot;`
+    RevocationReason string   `json:&quot;revocation_reason&quot;`
+    StatutoryCitation string  `json:&quot;statutory_citation&quot;`
+    Timestamp       time.Time `json:&quot;timestamp&quot;`
+    Signature       string    `json:&quot;signature&quot;`
+}</code></pre>
+
+<p>---</p>
+
+<h2>3. Python FastAPI Models (Pydantic v2 Contracts)</h2>
+
+<pre><code class="language-python">from pydantic import BaseModel, Field
+from typing import Dict, Any, Optional
+from datetime import datetime
+
+class DocumentUploadRequest(BaseModel):
+    citizen_national_id_token: str = Field(..., description=&quot;OIDC Verified Citizen Token&quot;)
+    certificate_type: str = Field(..., example=&quot;INCOME_AND_ASSET&quot;)
+    client_document_sha256: str = Field(..., min_length=64, max_length=64, example=&quot;4a5c6e8d...&quot;)
+    raw_file_base64: str = Field(..., description=&quot;Encrypted payload file binary&quot;)
+
+class AIProcessingResult(BaseModel):
+    application_id: str
+    ocr_confidence: float = Field(..., ge=0.0, le=1.0)
+    extracted_entities: Dict[str, Any]
+    biometric_similarity_score: float = Field(..., ge=0.0, le=1.0)
+    fraud_tamper_score: float = Field(..., ge=0.0, le=1.0)
+    syndicate_cluster_flag: bool
+    opa_policy_passed: bool
+    opa_evaluation_details: Dict[str, Any]
+
+class OfficerApprovalPayload(BaseModel):
+    application_id: str
+    officer_id: str
+    decision: str = Field(..., example=&quot;APPROVE&quot;) # APPROVE, REJECT, QUERY
+    statutory_citation_code: Optional[str] = None
+    officer_ecdsa_signature: str = Field(..., description=&quot;Hardware HSM/PKI ECDSA Signature&quot;)
+    timestamp: datetime = Field(default_factory=datetime.utcnow)</code></pre>
+
+        </div>
+    </div>
+</body>
+</html>

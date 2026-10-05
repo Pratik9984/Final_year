@@ -1,0 +1,17 @@
+{
+  "name": "MahaGov-Pulse | महाराष्ट्र शासन",
+  "short_name": "MahaGov-Pulse",
+  "description": "Autonomous Zero-Corruption Digital Public Infrastructure for Maharashtra State Certificates",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

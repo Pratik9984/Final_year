@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14 Sovereign Citizen Identity Architecture (DigiLocker + Aadhaar) | GovPulse Technical Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mermaid CDN for crisp vector diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#111827',
+                primaryColor: '#0c8fe9',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#025aa1',
+                lineColor: '#38bdf8',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #0c8fe9;
+            --primary-dark: #025aa1;
+            --accent: #10b981;
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-card: #182234;
+            --border: #233249;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, #072949 0%, #111827 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            color: #38bdf8;
+            margin: 0 0 8px 0;
+        }
+
+        .doc-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(12, 143, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(12, 143, 233, 0.4);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .print-btn {
+            background: #0c8fe9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .print-btn:hover { background: #025aa1; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: #f9fafb;
+        }
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+            color: #38bdf8;
+        }
+        h3 { margin-top: 24px; color: #7dd3fc; }
+
+        p, li { color: #d1d5db; font-size: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        th {
+            background: #182234;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        code:not(pre code) {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mermaid {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .box {
+            background: rgba(12, 143, 233, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        @media print {
+            body { background-color: #ffffff !important; color: #111827 !important; }
+            .print-btn { display: none !important; }
+            .page-container { max-width: 100% !important; padding: 0 !important; }
+            .doc-header { background: #f0f7ff !important; border: 1px solid #bae0fd !important; box-shadow: none !important; }
+            .doc-header h1 { color: #025aa1 !important; }
+            .doc-header p { color: #4b5563 !important; }
+            h1, h2, h3, h4 { color: #0b416f !important; }
+            h2 { border-bottom: 2px solid #025aa1 !important; color: #025aa1 !important; }
+            p, li { color: #1f2937 !important; }
+            table { background: #ffffff !important; border: 1px solid #d1d5db !important; }
+            th { background: #e0effe !important; color: #0b416f !important; }
+            td { border-bottom: 1px solid #e5e7eb !important; color: #1f2937 !important; }
+            pre { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
+            code:not(pre code) { background: #f1f5f9 !important; color: #0369a1 !important; }
+            .mermaid { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+            @page { margin: 15mm; size: A4 portrait; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="doc-header">
+            <div>
+                <span class="badge">Government Enterprise Specification</span>
+                <h1>14 Sovereign Citizen Identity Architecture</h1>
+                <p>Unified Hybrid DigiLocker OAuth 2.0 & Aadhaar e-KYC • Aadhaar Data Vault • DPDP Act 2023 • Version 1.0</p>
+            </div>
+            <div>
+                <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <h2>1. Architectural Decision Record (ADR-009)</h2>
+            <div class="box">
+                <p><strong>Decision:</strong> Adopt <strong>Option D (Unified Hybrid Architecture)</strong> combining <strong>MeitY DigiLocker OAuth 2.0 / MeriPehchaan</strong> and <strong>UIDAI Direct Aadhaar OTP e-KYC</strong> with an isolated <strong>Aadhaar Data Vault (ADV)</strong>.</p>
+                <p><strong>Rationale:</strong> Solves India's digital divide by providing 100% coverage (Aadhaar holders) while delivering 1-click automated document imports for DigiLocker holders. Conforms fully with the Supreme Court Puttaswamy judgment, UIDAI ADV regulations, and the India Digital Personal Data Protection (DPDP) Act 2023.</p>
+            </div>
+
+            <h2>2. High-Level System Topology</h2>
+            <div class="mermaid">
+flowchart TD
+    subgraph ClientEdge["Client Edge Tier (Next.js 14 + React 19)"]
+        CitizenUI["Citizen Portal & Mobile PWA"]
+        AuthModal["Unified Citizen Auth Modal"]
+        DigiTab["Tab 1: DigiLocker Fast-Track"]
+        AadhaarTab["Tab 2: Direct Aadhaar OTP / VID"]
+    end
+
+    subgraph ExternalIdP["External Sovereign Identity Providers (India Stack)"]
+        DigiLockerIdP["MeitY DigiLocker / MeriPehchaan\n(OAuth 2.0 + OpenID Connect)"]
+        UIDAI_CIDR["UIDAI Central Identities Data Repository (CIDR)\n(AUA / KUA Secure Gateway)"]
+    end
+
+    subgraph SecurityPerimeter["Zero-Trust Security Perimeter"]
+        WAF["Cloudflare Enterprise WAF\n(OWASP Top 10 + Geo-fencing)"]
+        Envoy["Envoy API Gateway\n(TLS 1.3 + Token-Bucket Rate Limiter)"]
+    end
+
+    subgraph IdentityCore["GovPulse Identity & Security Engine"]
+        OAuthHandler["DigiLocker OAuth2 PKCE Handler"]
+        AadhaarHandler["Aadhaar e-KYC XML Verifier"]
+        ADV["Aadhaar Data Vault (ADV)\n(Deterministic Tokenizer & Salt Engine)"]
+        KMS["HashiCorp Vault / Hardware Security Module (HSM)\n(FIPS 140-3 Level 3 KEK)"]
+    end
+
+    subgraph StorageTier["Secure Storage & Off-Chain Ledger"]
+        PostgresDB[("PostgreSQL Citus Distributed\n(AES-256-GCM Envelope Encrypted PII)")]
+        MahaVault[("MinIO S3 Once-Only MahaVault\n(Verified Issuer Certificates: Ration, 7/12, Form 16)")]
+        Hyperledger[("Hyperledger Fabric v2.5 Blockchain\n(Zero PII On-Chain: Only H_state Merkle Roots)")]
+    end
+
+    CitizenUI --> AuthModal
+    AuthModal --> DigiTab
+    AuthModal --> AadhaarTab
+
+    DigiTab -->|1. OAuth2 Redirect + PKCE| DigiLockerIdP
+    DigiLockerIdP -->|2. Auth Code + State| Envoy
+
+    AadhaarTab -->|1. Aadhaar / VID + Consent| Envoy
+    Envoy -->|2. OTP Dispatch / Verify| UIDAI_CIDR
+
+    WAF --> Envoy
+    Envoy --> OAuthHandler
+    Envoy --> AadhaarHandler
+
+    OAuthHandler --> ADV
+    AadhaarHandler --> ADV
+    ADV <--> KMS
+
+    ADV -->|Store Encrypted Demographic PII| PostgresDB
+    OAuthHandler -->|Auto-Ingest Official Certificates| MahaVault
+    ADV -->|Anchor Anonymous CitizenToken| Hyperledger
+            </div>
+
+            <h2>3. End-to-End Sequence Flows</h2>
+            <h3>Path 1: DigiLocker Fast-Track with Automatic MahaVault Synchronization</h3>
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Citizen as Citizen (Web / Mobile)
+    participant Portal as GovPulse Frontend
+    participant Gateway as Envoy & FastAPI Auth Svc
+    participant DigiLocker as MeitY DigiLocker OAuth2 Server
+    participant ADV as Aadhaar Data Vault (ADV)
+    participant VaultDB as MahaVault (MinIO S3)
+    participant SQL as PostgreSQL Citus (RLS)
+
+    Citizen->>Portal: Click "Continue with DigiLocker"
+    Portal->>Gateway: GET /api/v1/auth/digilocker/authorize-url
+    Gateway->>Gateway: Generate code_verifier & compute code_challenge = SHA256(verifier)
+    Gateway->>Gateway: Generate cryptographic state nonce (anti-CSRF)
+    Gateway-->>Portal: Return DigiLocker authorization URL with PKCE
+    Portal-->>Citizen: Redirect to official DigiLocker Consent Portal
+    
+    Citizen->>DigiLocker: Authenticate (DigiLocker Security PIN / Mobile OTP)
+    Citizen->>DigiLocker: Consent to share Demographic Info + Issued Certificates
+    DigiLocker-->>Portal: Redirect to callback URL with auth_code & state nonce
+    Portal->>Gateway: POST /api/v1/auth/digilocker/callback { code, state, verifier }
+    
+    Gateway->>DigiLocker: POST /oauth/token (code + code_verifier)
+    DigiLocker-->>Gateway: Return Access Token + ID Token (JWT)
+    
+    Gateway->>DigiLocker: GET /oauth/user/profile
+    DigiLocker-->>Gateway: Verified Demographic Profile (Name, DOB, Gender, Masked Aadhaar)
+    
+    Gateway->>ADV: Tokenize: CitizenToken = HMAC-SHA256(MaskedAadhaar, ADV_MasterSecret)
+    Gateway->>SQL: Store encrypted demographic profile (AES-256-GCM + AAD)
+    
+    Gateway->>DigiLocker: GET /oauth/user/documents (Query issued government certificates)
+    DigiLocker-->>Gateway: List of verified URIs: Form 16, Ration Card, Domicile Certificate
+    
+    loop For Each Verified Document
+        Gateway->>DigiLocker: GET /oauth/user/file/{doc_uri}
+        DigiLocker-->>Gateway: Return PDF Bytes + Issuer Digital Signature
+        Gateway->>Gateway: Compute H_doc = SHA-256(PDF_Bytes)
+        Gateway->>VaultDB: Store in MahaVault with AES-256 Envelope Encryption
+    end
+    
+    Gateway-->>Portal: Issue GovPulse JWT Session Token { citizen_id, name, masked_aadhaar }
+    Portal-->>Citizen: Dashboard Opens • MahaVault Pre-Loaded • Ready for 1-Click Application
+            </div>
+
+            <h3>Path 2: Direct Aadhaar OTP e-KYC via UIDAI Gateway</h3>
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Citizen as Citizen (Web / Mobile)
+    participant Portal as GovPulse Frontend
+    participant Gateway as Envoy & FastAPI Auth Svc
+    participant UIDAI as UIDAI CIDR (via AUA Gateway)
+    participant ADV as Aadhaar Data Vault (ADV)
+    participant SQL as PostgreSQL Citus (RLS)
+
+    Citizen->>Portal: Select "Aadhaar OTP" Tab
+    Citizen->>Portal: Enter 12-digit Aadhaar or 16-digit Virtual ID (VID)
+    Citizen->>Portal: Check Mandatory Statutory DPDP Act Consent Box
+    Portal->>Gateway: POST /api/v1/auth/aadhaar/send-otp { aadhaar_number, consent_signed: true }
+    
+    Gateway->>Gateway: Format validation + IP Rate-Limit check (max 3 OTP requests / 10 mins)
+    Gateway->>UIDAI: Request OTP Generation for Aadhaar/VID
+    UIDAI-->>Citizen: SMS Dispatched to Aadhaar-linked Mobile ("OTP is XXXXXX")
+    UIDAI-->>Gateway: OTP Generation Ack { txn_id: "UIDAI-TXN-88192" }
+    Gateway-->>Portal: Return HTTP 200 { status: "OTP_SENT", masked_aadhaar: "XXXX-XXXX-0123" }
+    Portal-->>Citizen: Display 6-digit OTP input box with 60-second countdown timer
+    
+    Citizen->>Portal: Enter 6-digit OTP (e.g. 123456)
+    Portal->>Gateway: POST /api/v1/auth/aadhaar/verify-otp { aadhaar_number, otp, txn_id }
+    
+    Gateway->>Gateway: Construct PID XML Block & Encrypt with UIDAI Public Key (RSA-2048)
+    Gateway->>UIDAI: Submit Signed e-KYC Verification Request
+    UIDAI-->>Gateway: Return Digitally Signed e-KYC XML (Name, Photo base64, DOB, Address, Phone Hash)
+    
+    Gateway->>ADV: Tokenize: CitizenToken = HMAC-SHA256(AadhaarNumber, ADV_MasterSecret)
+    Gateway->>ADV: Store token mapping inside isolated Aadhaar Data Vault
+    Gateway->>SQL: Store encrypted demographic record (AES-256-GCM + AAD)
+    
+    Gateway-->>Portal: Issue GovPulse JWT Session Token
+    Portal-->>Citizen: Dashboard Opens • "✓ Aadhaar eKYC Verified" Badge Displayed
+            </div>
+
+            <h2>4. Four Pillars of Identity Security & Data Protection</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Security Pillar</th>
+                        <th>Architectural Implementation</th>
+                        <th>Regulatory Standard</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Aadhaar Data Vault (ADV)</strong></td>
+                        <td>The 12-digit raw Aadhaar is never saved in databases or logs. Deterministically converted to <code>CitizenToken = HMAC-SHA256(Aadhaar, HSM_Key)</code>.</td>
+                        <td>UIDAI Circular F.No. 11020/205/2017</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Zero PII On-Chain</strong></td>
+                        <td>Hyperledger Fabric records zero cleartext names, photos, or Aadhaar numbers. Only <code>H_state = SHA256(...)</code> is committed.</td>
+                        <td>DPDP Act 2023 §8 & GDPR Art. 17 (Right to Erasure)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Mandatory 8-Digit Masking</strong></td>
+                        <td>UI, APIs, and PDF certificates only expose <code>XXXX-XXXX-1234</code>. First 8 digits permanently masked.</td>
+                        <td>Aadhaar Act 2016 §29 & RBI Guidelines</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. AES-256-GCM Envelope Encryption</strong></td>
+                        <td>Demographic PII in PostgreSQL Citus encrypted using per-user DEKs wrapped by HashiCorp Vault / HSM KEK.</td>
+                        <td>FIPS 140-3 Level 3 & ISO/IEC 27001</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>6. Frontend Citizen Authentication Experience Blueprint</h2>
+            <pre><code>┌──────────────────────────────────────────────────────────────────────────┐
+│ 🏛️ MahaGov-Pulse | Government of Maharashtra Citizen Identity Access    │
+│ Official Sovereign Gateway • RTS Act 2015 & DPDP Act 2023 Compliant       │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   ┌───────────────────────────┐    ┌─────────────────────────────────┐   │
+│   │ ⚡ Continue with DigiLocker │    │ 📱 Direct Aadhaar OTP e-KYC     │   │
+│   │ (Fast-Track + Auto Vault) │    │ (Aadhaar Number or 16-digit VID)│   │
+│   └───────────────────────────┘    └─────────────────────────────────┘   │
+│                                                                          │
+│   [TAB 1 CONTENT: DIGILOCKER FAST-TRACK]                                 │
+│   • 1-Click Login via MeitY National MeriPehchaan SSO                    │
+│   • Automatically syncs your official Ration Card, Form 16, and Domicile │
+│   • Zero document scanning required                                      │
+│                                                                          │
+│   [ 🚀 Continue with DigiLocker ]                                        │
+│                                                                          │
+│   ── OR ──                                                               │
+│                                                                          │
+│   [TAB 2 CONTENT: DIRECT AADHAAR OTP]                                    │
+│   Enter 12-digit Aadhaar / 16-digit VID:                                 │
+│   [ 1234 - 5678 - 9012                     ] [ Get OTP ]                 │
+│                                                                          │
+│   Enter 6-digit OTP sent to registered mobile:                           │
+│   [ •  •  •  •  •  • ] (Resend in 45s)                                   │
+│                                                                          │
+│   [  Verify & Secure Sign-In ]                                           │
+│                                                                          │
+│   ☑ Bilingual Statutory Consent:                                         │
+│     "I hereby consent to provide my Aadhaar/DigiLocker credentials for   │
+│      statutory certificate issuance under the Maharashtra RTS Act 2015   │
+│      and the Digital Personal Data Protection (DPDP) Act 2023."          │
+└──────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+            <h2>7. Operational REST API Specifications</h2>
+            <h3>1. Generate DigiLocker Authorize URL</h3>
+            <p><code>GET /api/v1/auth/digilocker/authorize-url</code></p>
+            <pre><code>{
+  "authorize_url": "https://digilocker.meripehchaan.gov.in/public/oauth2/1/authorize?client_id=MAHAGOV_PULSE_PROD&response_type=code&redirect_uri=https%3A%2F%2Fmahagov.in%2Fapi%2Fv1%2Fauth%2Fdigilocker%2Fcallback&state=a1b2c3d4e5f6&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256",
+  "state": "a1b2c3d4e5f6",
+  "code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+}</code></pre>
+
+            <h3>2. Handle DigiLocker OAuth Callback</h3>
+            <p><code>POST /api/v1/auth/digilocker/callback</code></p>
+            <pre><code>{
+  "access_token": "eyJhbGciOi...",
+  "token_type": "bearer",
+  "user_id": "CIT-MH-88190",
+  "full_name_en": "Rahul Suresh Patil",
+  "masked_aadhaar": "XXXX-XXXX-0123",
+  "district": "Pune",
+  "synced_documents_count": 3,
+  "mahavault_synced": ["RATION_CARD", "INCOME_CERTIFICATE_FORM16", "DOMICILE_CERTIFICATE"]
+}</code></pre>
+
+            <h3>3. Dispatch Aadhaar OTP</h3>
+            <p><code>POST /api/v1/auth/aadhaar/send-otp</code></p>
+            <pre><code>{
+  "status": "OTP_SENT",
+  "txn_id": "UIDAI-TXN-881920",
+  "masked_aadhaar": "XXXX-XXXX-9012",
+  "resend_available_in_seconds": 45
+}</code></pre>
+
+            <h3>4. Verify Aadhaar OTP & Complete e-KYC</h3>
+            <p><code>POST /api/v1/auth/aadhaar/verify-otp</code></p>
+            <pre><code>{
+  "access_token": "eyJhbGciOi...",
+  "token_type": "bearer",
+  "user_id": "CIT-MH-88190",
+  "full_name_en": "Rahul Suresh Patil",
+  "masked_aadhaar": "XXXX-XXXX-9012",
+  "district": "Pune",
+  "ekyc_status": "VERIFIED_UIDAI_AADHAAR"
+}</code></pre>
+        </div>
+    </div>
+</body>
+</html>

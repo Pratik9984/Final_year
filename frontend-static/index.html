@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MahaGov-Pulse | महाराष्ट्र शासन - डिजिटल सेवा प्रणाली</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f59e0b">
+</head>
+<body class="theme-dark">
+  <!-- Top Bar & State Emblem Header -->
+  <header class="master-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="gov-seal">
+          <div class="seal-icon">🏛️</div>
+        </div>
+        <div class="brand-text">
+          <div class="gov-title" data-i18n="gov_title">महाराष्ट्र शासन • GOVERNMENT OF MAHARASHTRA</div>
+          <h1 class="platform-title">MahaGov-Pulse <span class="badge-tag">OS 2.0</span></h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Live System Metric Pill -->
+        <div class="live-pill">
+          <span class="live-dot"></span>
+          <span class="live-text" data-i18n="system_status">48H HARD SLA ESCROW: ACTIVE</span>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="lang-switch">
+          <button id="btnLangEn" class="lang-btn active" onclick="setLanguage('en')">English</button>
+          <button id="btnLangMr" class="lang-btn" onclick="setLanguage('mr')">मराठी</button>
+        </div>
+
+        <!-- Guided Demo Tour Button -->
+        <button class="btn-primary" style="background: linear-gradient(135deg, var(--accent-saffron), var(--accent-gold)); color: black; font-weight: 800; font-size: 11px; padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer;" onclick="startDemoTour()">
+          🎬 Guided Demo Tour
+        </button>
+
+        <!-- Role Switcher -->
+        <div class="role-selector">
+          <button id="roleCitizen" class="role-tab active" onclick="switchRole('citizen')">
+            <span class="tab-icon">👤</span> <span data-i18n="role_citizen">Citizen Portal</span>
+          </button>
+          <button id="roleOfficer" class="role-tab" onclick="switchRole('officer')">
+            <span class="tab-icon">⚖️</span> <span data-i18n="role_officer">Officer Desk</span>
+          </button>
+          <button id="roleVerifier" class="role-tab" onclick="switchRole('verifier')">
+            <span class="tab-icon">🔍</span> <span data-i18n="role_verifier">Public Verifier</span>
+          </button>
+          <button id="roleOps" class="role-tab" onclick="switchRole('ops')">
+            <span class="tab-icon">🤖</span> <span>Ops AI Agent</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="app-main">
+    
+    <!-- CITIZEN PORTAL VIEW -->
+    <section id="viewCitizen" class="view-section active">
+      <!-- Citizen Header & Linked Identity Banner -->
+      <div class="identity-banner glass-card">
+        <div class="citizen-info">
+          <div class="avatar-box">RP</div>
+          <div class="citizen-details">
+            <div class="name-row">
+              <h2 id="citName">Rahul Suresh Patil (राहुल सुरेश पाटील)</h2>
+              <span class="verified-badge">✓ Aadhaar eKYC Verified</span>
+            </div>
+            <div class="meta-row">
+              <span>📍 Haveli, Pune, Maharashtra</span>
+              <span>•</span>
+              <span>Aadhaar: <code class="mono-hash">XXXX-XXXX-0123</code></span>
+              <span>•</span>
+              <span>PAN: <code class="mono-hash">ABCDE1234F</code></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MahaVault Quick Stats -->
+        <div class="vault-summary-box">
+          <div class="vault-stat">
+            <div class="stat-num" id="vaultDocCount">4</div>
+            <div class="stat-lbl" data-i18n="vault_docs_lbl">MahaVault Verified Docs</div>
+          </div>
+          <div class="vault-stat">
+            <div class="stat-num text-gold">0</div>
+            <div class="stat-lbl" data-i18n="manual_upload_lbl">Manual Uploads Needed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Citizen Navigation Tabs -->
+      <div class="tab-nav">
+        <button class="sub-tab active" onclick="switchCitizenTab('services')">
+          📋 <span data-i18n="tab_services">All Maharashtra Services (13)</span>
+        </button>
+        <button class="sub-tab" onclick="switchCitizenTab('vault')">
+          🗄️ <span data-i18n="tab_vault">My MahaVault ("Once-Only" Docs)</span>
+        </button>
+        <button class="sub-tab" onclick="switchCitizenTab('mycerts')">
+          🏅 <span data-i18n="tab_mycerts">My Issued Certificates</span>
+        </button>
+        <button class="sub-tab" onclick="switchCitizenTab('schemes')">
+          🎯 <span data-i18n="tab_schemes">MahaDBT Schemes Matcher</span>
+        </button>
+        <button class="sub-tab" onclick="switchCitizenTab('track')">
+          ⏱️ <span data-i18n="tab_tracking">Live 48h SLA Tracking</span>
+        </button>
+        <button class="sub-tab" onclick="switchCitizenTab('renew')">
+          ⚡ <span data-i18n="tab_renew">1-Click Smart Renewal</span>
+        </button>
+      </div>
+
+      <!-- 1. All Services Catalog -->
+      <div id="subtabServices" class="subtab-content active">
+        <div class="section-title-bar">
+          <div>
+            <h3 data-i18n="catalog_heading">Single-Window Maharashtra Certificate Issuance</h3>
+            <p class="subtitle" data-i18n="catalog_sub">Deterministic OPA legal check • Auto-fetches from MahaVault • Blind Algorithmic Dispatch</p>
+          </div>
+          <div class="search-box">
+            <input type="text" id="serviceSearch" placeholder="Search (उदा. उत्पन्न, सातबारा, Domicile)..." oninput="filterServices()">
+          </div>
+        </div>
+
+        <div class="services-grid" id="servicesContainer">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- 2. MahaVault View ("Once-Only" Storage) -->
+      <div id="subtabVault" class="subtab-content">
+        <div class="vault-intro glass-card">
+          <div class="vault-icon-large">🛡️</div>
+          <div class="vault-intro-text">
+            <h3 data-i18n="vault_title">MahaVault: Sovereign Citizen Data Locker</h3>
+            <p data-i18n="vault_desc">Documents stored here are hashed with SHA-256 and envelope encrypted with AES-256-GCM. Once a document is verified, you <strong>never have to upload it again</strong> for any Maharashtra certificate or scheme.</p>
+          </div>
+        </div>
+
+        <div class="vault-grid" id="vaultContainer">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- 2B. My Issued Certificates Subtab -->
+      <div id="subtabMycerts" class="subtab-content">
+        <div class="section-title-bar">
+          <div>
+            <h3>माझे अधिकृत डिजिटल प्रमाणपत्रे (My Issued Certificates)</h3>
+            <p class="subtitle">ECDSA P-256 Verifiable Credentials anchored to the Maharashtra State Blockchain Ledger</p>
+          </div>
+        </div>
+        <div class="certs-grid" id="myCertsContainer">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- 2C. MahaDBT Schemes Matcher Subtab -->
+      <div id="subtabSchemes" class="subtab-content">
+        <div class="section-title-bar">
+          <div>
+            <h3>MahaDBT कल्याणकारी योजना पात्रता (Autonomous Scheme Matcher)</h3>
+            <p class="subtitle">1-Click Apply via Aadhaar Payment Bridge (APB) — Zero manual paperwork or branch visits!</p>
+          </div>
+          <div class="live-pill" style="margin: 0;">
+            <span class="live-dot"></span>
+            <span id="eligibleSchemesBadge">Evaluating Active Schemes...</span>
+          </div>
+        </div>
+        <div class="schemes-grid" id="schemesContainer">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- 3. Live 48-Hour SLA Tracking -->
+      <div id="subtabTrack" class="subtab-content">
+        <div class="tracking-card glass-card">
+          <div class="track-header">
+            <div>
+              <span class="badge-service" id="trackServiceCode">INCOME_CERT</span>
+              <h3 id="trackAppNumber">Application: MAH-2026-INC-10001</h3>
+              <p class="subtitle">Applicant: Rahul Suresh Patil • Revenue Dept, Haveli, Pune</p>
+            </div>
+            <div class="sla-clock-box">
+              <div class="sla-label" data-i18n="sla_remaining_lbl">48-Hour Hard SLA Remaining</div>
+              <div class="sla-timer" id="liveSlaClock">47h 58m 22s</div>
+              <div class="sla-progress-bar"><div class="sla-fill" style="width: 95%;"></div></div>
+            </div>
+          </div>
+
+          <!-- Timeline Audit Steps -->
+          <div class="timeline-stepper">
+            <div class="step completed">
+              <div class="step-circle">✓</div>
+              <div class="step-label">Submitted</div>
+              <div class="step-time">Instant</div>
+            </div>
+            <div class="step completed">
+              <div class="step-circle">✓</div>
+              <div class="step-label">MahaVault Auto-Fetch</div>
+              <div class="step-time">Zero Re-upload</div>
+            </div>
+            <div class="step completed">
+              <div class="step-circle">✓</div>
+              <div class="step-label">OPA Statutory Rules Check</div>
+              <div class="step-time">Passed Deterministically</div>
+            </div>
+            <div class="step active">
+              <div class="step-circle">⚖️</div>
+              <div class="step-label">Blind Officer Checkpoint</div>
+              <div class="step-time">Assigned (Nayab Tahsildar)</div>
+            </div>
+            <div class="step">
+              <div class="step-circle">🔗</div>
+              <div class="step-label">Blockchain Anchor & QR</div>
+              <div class="step-time">Pending Sign</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 1-Click Renewal View -->
+      <div id="subtabRenew" class="subtab-content">
+        <div class="renewal-container glass-card">
+          <div class="renewal-header">
+            <div class="renew-icon">⚡</div>
+            <div>
+              <h3 data-i18n="renew_title">1-Click Smart Certificate Renewal</h3>
+              <p data-i18n="renew_desc">No more standing in queues or filling 5-page forms every financial year. The system automatically pulls your updated ITR / 7/12 from MahaVault and re-runs deterministic OPA checks.</p>
+            </div>
+          </div>
+
+          <div class="expiring-certs-list" id="renewListContainer">
+            <!-- Populated dynamically via app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OFFICER APPROVAL DESK VIEW -->
+    <section id="viewOfficer" class="view-section">
+      <div class="officer-header glass-card">
+        <div class="officer-info">
+          <div class="avatar-box officer-avatar">NT</div>
+          <div>
+            <h2>Shri Rajesh Patil (श्री राजेश पाटील)</h2>
+            <p class="subtitle">Designated Officer (RTS Act) • Nayab Tahsildar, Haveli Circle, Pune</p>
+          </div>
+        </div>
+        <div class="officer-metrics">
+          <div class="off-metric">
+            <div class="stat-num" id="officerQueueCount">1</div>
+            <div class="stat-lbl">Blind-Assigned Files</div>
+          </div>
+          <div class="off-metric">
+            <div class="stat-num text-green">100%</div>
+            <div class="stat-lbl">48H SLA Compliance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Screen Review Desk -->
+      <div class="split-desk">
+        <!-- Left: Blind Queue -->
+        <div class="desk-pane queue-pane glass-card">
+          <div class="pane-header">
+            <h3>📥 Blind-Assigned Queue</h3>
+            <span class="badge-info">No Cherry-Picking</span>
+          </div>
+          <div class="queue-list" id="officerQueueList">
+            <!-- Populated dynamically via app.js -->
+          </div>
+        </div>
+
+        <!-- Right: Pre-Verified AI & OPA Dossier Review -->
+        <div class="desk-pane review-pane glass-card" id="officerReviewPane">
+          <div class="pane-header">
+            <h3>📑 Pre-Verified Application Dossier</h3>
+            <span class="badge-tag">AI Confidence: 99.2%</span>
+          </div>
+
+          <div class="dossier-content" id="dossierContent">
+            <!-- Active review item populated via app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PUBLIC INSTANT VERIFIER VIEW -->
+    <section id="viewVerifier" class="view-section">
+      <div class="verifier-container glass-card">
+        <div class="verifier-header">
+          <div class="verifier-icon">🔍</div>
+          <div>
+            <h2 data-i18n="verifier_title">Public Sovereign Certificate Verification</h2>
+            <p data-i18n="verifier_desc">Universities (MHT-CET / NEET CAP rounds), MPSC, employers, and banks can verify any issued Maharashtra government certificate in milliseconds without calling centralized databases.</p>
+          </div>
+        </div>
+
+        <!-- Search Bar & Scanning Tools -->
+        <div class="verify-input-group">
+          <input type="text" id="certInput" placeholder="Enter Certificate Number (e.g., MAH-CERT-2026-98124)..." value="MAH-CERT-2026-98124">
+          <button class="btn-primary" onclick="verifyCertificate()">🔍 Verify Authenticity</button>
+        </div>
+
+        <div class="verify-scanner-tools">
+          <button class="btn-secondary" onclick="toggleCameraScanner()">📷 Scan QR with Camera</button>
+          <label class="btn-secondary file-upload-label">
+            📁 Upload QR Code Image
+            <input type="file" id="qrFileInput" accept="image/*" style="display:none;" onchange="handleQRFileUpload(event)">
+          </label>
+        </div>
+
+        <!-- Camera Scanner Viewport -->
+        <div id="cameraScannerContainer" style="display:none; margin: 15px auto; text-align:center; max-width:420px;">
+          <div class="camera-viewport">
+            <video id="qrVideo" playsinline autoplay muted style="width:100%; border-radius:12px; border:2px solid var(--accent-gold);"></video>
+            <canvas id="qrCanvas" style="display:none;"></canvas>
+            <div class="scanner-laser"></div>
+          </div>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:6px;">Align QR code within the frame to scan</p>
+          <button class="btn-danger" style="margin-top:8px;" onclick="stopCameraScanner()">✕ Close Camera</button>
+        </div>
+
+        <!-- Verification Result Card -->
+        <div id="verifyResult" class="verify-result-box">
+          <!-- Dynamic verification card -->
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTONOMOUS OPERATIONS AI AGENT DASHBOARD VIEW (Phase 30) -->
+    <section id="viewOps" class="view-section">
+      <div class="ops-header glass-card">
+        <div class="ops-info">
+          <div class="avatar-box" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">🤖</div>
+          <div>
+            <h2>Autonomous Operations AI Agent (प्रणाली देखरेख व स्वयंचलित निवारण)</h2>
+            <p class="subtitle">Conforms to 05_ANTI_CORRUPTION_WORKFLOW_AND_SLA_ENGINE.md • 24/7 Real-Time Kafka Stream Monitor</p>
+          </div>
+        </div>
+        <div class="ops-actions">
+          <button class="btn-primary" onclick="simulateSurgeAnomaly()">⚡ Simulate 400% Application Surge</button>
+        </div>
+      </div>
+
+      <!-- Live Stage Latency Meters -->
+      <div class="stage-latency-grid">
+        <div class="latency-card glass-card">
+          <div class="stage-top">
+            <span class="stage-name">Document AI Extraction</span>
+            <span class="stage-status status-green" id="statOcr">OPTIMAL (0.04h)</span>
+          </div>
+          <div class="latency-meter"><div class="meter-fill" id="fillOcr" style="width: 25%;"></div></div>
+          <div class="baseline-text">Baseline: 0.05h (3 min) • PyTorch LayoutLMv3 Pods</div>
+        </div>
+
+        <div class="latency-card glass-card">
+          <div class="stage-top">
+            <span class="stage-name">Deterministic OPA Engine</span>
+            <span class="stage-status status-green">OPTIMAL (0.001h)</span>
+          </div>
+          <div class="latency-meter"><div class="meter-fill" style="width: 10%;"></div></div>
+          <div class="baseline-text">Baseline: 0.001h (3.6s) • Rego Rule Evaluation</div>
+        </div>
+
+        <div class="latency-card glass-card">
+          <div class="stage-top">
+            <span class="stage-name">Blind Algorithmic Dispatch</span>
+            <span class="stage-status status-green">OPTIMAL (0.01h)</span>
+          </div>
+          <div class="latency-meter"><div class="meter-fill" style="width: 15%;"></div></div>
+          <div class="baseline-text">Baseline: 0.01h (36s) • HMAC-SHA256 Pseudo-Random</div>
+        </div>
+
+        <div class="latency-card glass-card">
+          <div class="stage-top">
+            <span class="stage-name">Officer Review Queue</span>
+            <span class="stage-status status-green">OPTIMAL (1.2h)</span>
+          </div>
+          <div class="latency-meter"><div class="meter-fill" style="width: 30%;"></div></div>
+          <div class="baseline-text">Hard Limit: 48.0h • Auto-Escalation Escrow</div>
+        </div>
+      </div>
+
+      <!-- Active Anomaly Diagnostic & Auto-Remediation Feed -->
+      <div class="anomaly-feed glass-card" style="margin-top: 24px;">
+        <div class="pane-header">
+          <h3>🚨 Live Anomaly Diagnostics & Root Cause Isolation</h3>
+          <span class="badge-tag">Self-Healing Enabled</span>
+        </div>
+        <div id="anomalyListContainer">
+          <div class="anomaly-item status-normal">
+            <div class="anomaly-dot-green"></div>
+            <div>
+              <strong>All 36 Maharashtra Districts Normal:</strong> No queue saturation detected. Average end-to-end turnaround: 2.1 hours.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Dynamic Application Modal -->
+  <div id="applyModal" class="modal-backdrop">
+    <div class="modal-dialog glass-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Apply for Certificate</h3>
+        <button class="modal-close" onclick="closeApplyModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Form elements populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Document AI Bounding Box Viewer Modal -->
+  <div id="docAiModal" class="modal-backdrop">
+    <div class="modal-dialog glass-card" style="width: 900px; max-width: 95vw;">
+      <div class="modal-header">
+        <h3 id="docAiTitle">Multi-Modal Document AI Inspection (LayoutLMv3)</h3>
+        <button class="modal-close" onclick="closeDocAiModal()">✕</button>
+      </div>
+      <div class="modal-body" id="docAiBody">
+        <!-- Document AI content populated via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Official Maharashtra Government Certificate Preview Modal -->
+  <div id="certModal" class="modal-backdrop">
+    <div class="modal-dialog glass-card" style="width: 780px; max-width: 95vw;">
+      <div class="modal-header">
+        <h3>Government of Maharashtra Official Certificate Preview</h3>
+        <button class="modal-close" onclick="closeCertModal()">✕</button>
+      </div>
+      <div class="modal-body" id="certModalBody">
+        <!-- Certificate populated via app.js -->
+      </div>
+    </div>
+  <!-- Guided Demo Tour Modal -->
+  <div id="tourModal" class="modal-backdrop">
+    <div class="modal-dialog glass-card" style="width: 520px; max-width: 90vw; text-align: center; border: 2px solid var(--accent-gold);">
+      <div style="font-size: 38px; margin-bottom: 8px;" id="tourIcon">🏛️</div>
+      <h3 id="tourTitle" style="color: var(--accent-gold); margin-bottom: 8px; font-size: 18px;">MahaGov-Pulse Interactive Tour</h3>
+      <p id="tourBody" style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+        Welcome to the Maharashtra Autonomous DPI Platform.
+      </p>
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px;">
+        <span id="tourStepIndicator" style="font-size: 12px; color: var(--text-muted); font-family: monospace;">Step 1 of 5</span>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-secondary" onclick="closeDemoTour()">✕ Exit Tour</button>
+          <button class="btn-primary" id="btnTourNext" onclick="nextDemoTourStep()">Next Step →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[MahaGov-Pulse PWA] Service Worker registered:', reg.scope))
+          .catch(err => console.log('[MahaGov-Pulse PWA] SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

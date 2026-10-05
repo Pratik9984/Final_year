@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02 Tech Stack & Framework Selection | GovPulse Technical Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mermaid CDN for crisp vector diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#111827',
+                primaryColor: '#0c8fe9',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#025aa1',
+                lineColor: '#38bdf8',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #0c8fe9;
+            --primary-dark: #025aa1;
+            --accent: #10b981;
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-card: #182234;
+            --border: #233249;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, #072949 0%, #111827 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            color: #38bdf8;
+            margin: 0 0 8px 0;
+        }
+
+        .doc-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(12, 143, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(12, 143, 233, 0.4);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .print-btn {
+            background: #0c8fe9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .print-btn:hover { background: #025aa1; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: #f9fafb;
+        }
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+            color: #38bdf8;
+        }
+        h3 { margin-top: 24px; color: #7dd3fc; }
+
+        p, li { color: #d1d5db; font-size: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        th {
+            background: #182234;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        code:not(pre code) {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mermaid {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        blockquote {
+            border-left: 4px solid #0c8fe9;
+            background: rgba(12, 143, 233, 0.08);
+            margin: 16px 0;
+            padding: 12px 20px;
+            border-radius: 0 8px 8px 0;
+            color: #bae0fd;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #111827 !important;
+            }
+            .print-btn { display: none !important; }
+            .page-container { max-width: 100% !important; padding: 0 !important; }
+            .doc-header {
+                background: #f0f7ff !important;
+                border: 1px solid #bae0fd !important;
+                box-shadow: none !important;
+            }
+            .doc-header h1 { color: #025aa1 !important; }
+            .doc-header p { color: #4b5563 !important; }
+            h1, h2, h3, h4 { color: #0b416f !important; }
+            h2 { border-bottom: 2px solid #025aa1 !important; }
+            p, li { color: #1f2937 !important; }
+            table { background: #ffffff !important; border: 1px solid #d1d5db !important; }
+            th { background: #e0effe !important; color: #0b416f !important; }
+            td { border-bottom: 1px solid #e5e7eb !important; color: #1f2937 !important; }
+            pre { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
+            code:not(pre code) { background: #f1f5f9 !important; color: #0369a1 !important; }
+            .mermaid { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+            blockquote { background: #eff6ff !important; border-left: 4px solid #0284c7 !important; color: #1e3a8a !important; }
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="doc-header">
+            <div>
+                <span class="badge">Government Enterprise Specification</span>
+                <h1>02 Tech Stack & Framework Selection</h1>
+                <p>Next.js vs Vite, Python FastAPI & Multi-Tier DBs • GovPulse Technical Architecture Suite • Version 1.0 (Production)</p>
+            </div>
+            <div>
+                <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+            </div>
+        </div>
+        <div class="content">
+            <h1>Technology Stack & Framework Selection Document</h1>
+<h2>Project: GovPulse Autonomous Digital Government Platform</h2>
+
+<p>---</p>
+
+<h2>1. Frontend Framework Decision: Next.js vs. React + Vite</h2>
+
+<p>For an enterprise-scale, mission-critical government platform serving millions of citizens alongside authorized high-security government officials, frontend architecture requires careful trade-off analysis.</p>
+
+<h3>Comparative Decision Matrix</h3>
+
+<table><thead><tr>
+<th>Architectural Criterion</th>
+<th>Next.js 14+ (App Router)</th>
+<th>React + Vite (Single Page App)</th>
+<th>Winner & Critical Analysis for GovPulse</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Zero-Trust Security & Token Isolation</strong></td>
+<td><strong>Exceptional (BFF Pattern):</strong> Backend-for-Frontend (BFF) allows storing sensitive OAuth/OIDC tokens in HTTP-only, encrypted server session cookies. Client JavaScript never touches raw tokens.</td>
+<td><strong>Moderate:</strong> Tokens typically reside in browser <code>localStorage</code> or memory, making them vulnerable to Cross-Site Scripting (XSS) token theft.</td>
+<td><strong>Winner: Next.js</strong> (Mandatory for government-grade Zero-Trust compliance).</td>
+</tr>
+<tr>
+<td><strong>Initial Load Performance & SEO</strong></td>
+<td><strong>Instant (SSR / RSC):</strong> Server-Side Rendering & Server Components deliver pre-rendered HTML with sub-second First Contentful Paint (FCP) on low-bandwidth 3G/4G citizen mobile devices.</td>
+<td><strong>Slower Initial Load:</strong> Heavy JS bundle must be downloaded and parsed before first render, leading to blank screen delays on low-end citizen devices.</td>
+<td><strong>Winner: Next.js</strong> (Crucial for universal citizen accessibility).</td>
+</tr>
+<tr>
+<td><strong>Official Officer Workspace UI</strong></td>
+<td><strong>Excellent:</strong> Dynamic streaming SSR (<code>Suspense</code>), optimistic UI updates, and server actions for hardware token coordination.</td>
+<td><strong>Excellent:</strong> Rich client-side state manipulation, rapid hot-module reloading during development.</td>
+<td><strong>Tie</strong></td>
+</tr>
+<tr>
+<td><strong>Deployment & Security Isolation</strong></td>
+<td><strong>Multi-Tier:</strong> Can run in isolated Node.js container behind Envoy, serving as a hardened edge layer.</td>
+<td><strong>Static CDN:</strong> Deployable to static object storage/CDN. However, static assets require open public APIs.</td>
+<td><strong>Winner: Next.js</strong></td>
+</tr>
+<tr>
+<td><strong>WebAuthn / FIDO2 Integration</strong></td>
+<td>Native browser WebAuthn API works seamlessly with Next.js server verification routes.</td>
+<td>Works seamlessly via client-side WebAuthn API calling FastAPI endpoints.</td>
+<td><strong>Tie</strong></td>
+</tr>
+</tbody></table>
+<h3>Definitive Recommendation: <strong>Next.js 14+ (App Router) with Tailwind CSS</strong></h3>
+<blockquote><strong>Decision Rationale:</strong> Next.js provides the <strong>Backend-for-Frontend (BFF)</strong> security architecture essential for government Zero-Trust. It prevents tokens from leaking to the browser, accelerates citizen load times on mobile devices across remote regions via SSR, and enables unified API routing with automated security headers (<code>Strict-Transport-Security</code>, <code>Content-Security-Policy</code>, <code>X-Frame-Options: DENY</code>).</blockquote>
+
+<p>---</p>
+
+<h2>2. Python Backend Microservices Architecture</h2>
+
+<p>The entire core processing, AI, policy, and workflow backend is built on <strong>Python 3.12+</strong>, leveraging its unparalleled ecosystem for asynchronous microservices, deep learning inference, cryptographic binding, and mathematical data pipelines.</p>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                PYTHON BACKEND ARCHITECTURE                              │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│ • Framework: FastAPI (Async ASGI, OpenAPI 3.1, Sub-millisecond Pydantic v2 validation) │
+│ • AI &amp; Inference Engine: PyTorch 2.4+ / ONNX Runtime GPU (CUDA 12.4 acceleration)       │
+│ • Document Vision: LayoutLMv3, PyMuPDF (fitz), PaddleOCR v4, OpenCV                     │
+│ • Biometric Matching: InsightFace / ArcFace (ResNet-100 backbone)                       │
+│ • Fraud ML &amp; Stats: Scikit-Learn (Isolation Forest), NetworkX, PySpark                  │
+│ • Deterministic Policy: Python OPA Client (`open-policy-agent` / WASM runtime)          │
+│ • Workflow Orchestration: Temporal Python SDK (Stateful Saga executions)                │
+│ • Cryptography: `cryptography` (OpenSSL 3.3 bindings, ECDSA, Ed25519, AES-256-GCM)     │
+└─────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+<h3>Microservices Decomposition:</h3>
+
+<div class="mermaid">
+graph TD
+    subgraph GatewayLayer["API Gateway"]
+        Envoy[Envoy Proxy / mTLS]
+    end
+
+    subgraph PythonServices["FastAPI Python Async Microservices (Port 8000-8007)"]
+        S1[govpulse-auth\nOIDC / WebAuthn / RBAC]
+        S2[govpulse-intake\nPayload Envelope & SHA-256 Check]
+        S3[govpulse-docai\nLayoutLMv3 OCR & Bounding Box]
+        S4[govpulse-bio\nArcFace Biometric Vector Match]
+        S5[govpulse-policy\nOPA Rego Deterministic Engine]
+        S6[govpulse-fraud\nIsolation Forest + Neo4j Graph]
+        S7[govpulse-router\nBlind Algorithmic Dispatcher]
+        S8[govpulse-ops\nSelf-Monitoring Anomaly Intelligence]
+    end
+
+    Envoy --> S1
+    Envoy --> S2
+    Envoy --> S7
+    Envoy --> S8
+
+    S2 --> S3
+    S2 --> S4
+    S3 --> S5
+    S4 --> S5
+    S5 --> S6
+    S6 --> S7
+</div>
+
+<p>---</p>
+
+<h2>3. Multi-Tier Database Architecture & Security Evaluation</h2>
+
+<p>A national-scale digital government platform cannot use a single monolithic database. Different workloads require distinct storage guarantees for <strong>performance, relational integrity, vector similarity, graph relationships, and cryptographic immutability</strong>.</p>
+
+<div class="mermaid">
+graph LR
+    subgraph UseCases["System Use Cases"]
+        U1[Relational Transactions & Audits]
+        U2[Encrypted Binary Files & PDFs]
+        U3[Session State & Rate Limiting]
+        U4[Biometric Facial Embeddings]
+        U5[Syndicate & Collusion Graphs]
+        U6[Immutable Public Proof Ledger]
+    end
+
+    subgraph Databases["Specialized Database Engines"]
+        DB1[(PostgreSQL 16 + Citus\nRow Level Security + AES-256 TDE)]
+        DB2[(MinIO Object Storage\nServer-Side KMS AES-256-GCM)]
+        DB3[(Redis Enterprise Cluster\nIn-Memory Token Bucket)]
+        DB4[(Qdrant Vector DB\nHNSW Cosine Index)]
+        DB5[(Neo4j Graph Database\nCypher Anomaly Traversal)]
+        DB6[(Hyperledger Fabric State DB\nCouchDB Document Store)]
+    end
+
+    U1 --> DB1
+    U2 --> DB2
+    U3 --> DB3
+    U4 --> DB4
+    U5 --> DB5
+    U6 --> DB6
+</div>
+
+<h3>Detailed Database Evaluation Matrix</h3>
+
+<table><thead><tr>
+<th>Database Engine</th>
+<th>Designated System Role</th>
+<th>Storage Model</th>
+<th>Security & Compliance Feature</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>PostgreSQL 16 + Citus</strong></td>
+<td>Application state, citizen profiles, officer audit logs, SLA timers.</td>
+<td>Relational SQL (ACID)</td>
+<td><strong>Row-Level Security (RLS)</strong> restricts data visibility per tenant/district; Transparent Data Encryption (TDE); immutable append-only audit tables.</td>
+</tr>
+<tr>
+<td><strong>MinIO Enterprise (S3 API)</strong></td>
+<td>Uploaded scanned certificates, tax forms, identity card binaries.</td>
+<td>Object Store (Blob)</td>
+<td><strong>Per-Object AES-256-GCM Envelope Encryption</strong> with external HashiCorp Vault KMS; Object Locking (WORM: Write Once, Read Many).</td>
+</tr>
+<tr>
+<td><strong>Redis 7.4 Enterprise</strong></td>
+<td>Distributed session tokens, API rate-limiting, live SLA countdown cache.</td>
+<td>In-Memory Key-Value</td>
+<td>TLS encrypted communication, ACL authentication, sub-millisecond response for live SLA dashboards.</td>
+</tr>
+<tr>
+<td><strong>Qdrant Vector Database</strong></td>
+<td>512-dimensional facial biometric vector embeddings extracted via ArcFace.</td>
+<td>HNSW Vector Index</td>
+<td>High-dimensional cosine distance matching with hardware AVX-512 acceleration, payload filtering, and encrypted vector indices.</td>
+</tr>
+<tr>
+<td><strong>Neo4j Enterprise</strong></td>
+<td>Identity collision networks, address reuse, notary fraud syndicates.</td>
+<td>Labeled Property Graph</td>
+<td>Real-time Cypher graph queries detecting multi-hop collusions across unrelated applicants.</td>
+</tr>
+<tr>
+<td><strong>Hyperledger Fabric (CouchDB)</strong></td>
+<td>Block state database containing certificate hashes, issuer signatures, and status.</td>
+<td>Distributed State Ledger</td>
+<td>Cryptographically signed state transitions validated by multi-organization endorsement policies.</td>
+</tr>
+</tbody></table>
+<p>---</p>
+
+<h2>4. Secure Inter-Service Communication Protocol</h2>
+
+<p>To prevent lateral movement inside the government cloud perimeter, all services adhere to <strong>Zero-Trust Network Architecture (NIST SP 800-207)</strong>:</p>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                           INTER-SERVICE SECURITY PROTOCOLS                              │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1. Synchronous Control Plane: gRPC over mTLS (Mutual TLS 1.3 with SPIFFE/SPIRE IDs)     │
+│ 2. Asynchronous Data Plane: Apache Kafka with SASL/SCRAM authentication &amp; TLS encryption│
+│ 3. Internal Service Authorization: Short-lived Spiffe JWT SVID tokens verified at proxy │
+│ 4. Encryption at Rest: AES-256-GCM across all database volumes (LUKS / dm-crypt)        │
+│ 5. Key Management: HashiCorp Vault with Hardware Security Module (HSM) root of trust    │
+└─────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+<div class="mermaid">
+flowchart LR
+    ServiceA[FastAPI Service A\nSpiffe ID: spiffe://gov.internal/docai] -->|gRPC over mTLS 1.3| EnvoySidecarA[Envoy Sidecar]
+    EnvoySidecarA -->|mTLS Handshake + SVID Validation| EnvoySidecarB[Envoy Sidecar]
+    EnvoySidecarB -->|gRPC over localhost| ServiceB[FastAPI Service B\nSpiffe ID: spiffe://gov.internal/policy]
+
+    ServiceA -.->|Encrypted Event JSON| KafkaTopic[Kafka Topic: doc.extracted\nSASL_SSL + AES-256 Payload]
+    KafkaTopic -.->|Consume Event| ServiceB
+</div>
+
+<p>---</p>
+
+<h2>5. Complete Tech Stack Summary Table</h2>
+
+<table><thead><tr>
+<th>Category</th>
+<th>Primary Technology</th>
+<th>Purpose in GovPulse</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Frontend UI</strong></td>
+<td><strong>Next.js 14+ / React / Tailwind CSS</strong></td>
+<td>Citizen application portal & single-officer review desk with SSR security.</td>
+</tr>
+<tr>
+<td><strong>Edge Security</strong></td>
+<td><strong>Cloudflare Enterprise + Envoy Proxy</strong></td>
+<td>WAF, DDoS mitigation, mTLS, rate limiting, and ABAC gateway.</td>
+</tr>
+<tr>
+<td><strong>Core Backend</strong></td>
+<td><strong>Python 3.12+ (FastAPI)</strong></td>
+<td>High-performance asynchronous REST and gRPC microservices.</td>
+</tr>
+<tr>
+<td><strong>Workflow & SLA</strong></td>
+<td><strong>Temporal.io (Python SDK)</strong></td>
+<td>Distributed state machine enforcing 48-hour hard SLA escrow.</td>
+</tr>
+<tr>
+<td><strong>AI Document Extraction</strong></td>
+<td><strong>LayoutLMv3 + PyMuPDF + PaddleOCR</strong></td>
+<td>Multimodal OCR, key-value parsing, visual bounding boxes.</td>
+</tr>
+<tr>
+<td><strong>Biometric Vision</strong></td>
+<td><strong>InsightFace / ArcFace (PyTorch)</strong></td>
+<td>Vectorized facial identity verification against national ID records.</td>
+</tr>
+<tr>
+<td><strong>Statutory Policy Engine</strong></td>
+<td><strong>Open Policy Agent (OPA) / Rego</strong></td>
+<td>Deterministic legal eligibility evaluation with statutory code citations.</td>
+</tr>
+<tr>
+<td><strong>Fraud & Anomaly ML</strong></td>
+<td><strong>Isolation Forest + Neo4j Graph DB</strong></td>
+<td>Document tampering anomaly scoring and identity syndicate detection.</td>
+</tr>
+<tr>
+<td><strong>Relational Storage</strong></td>
+<td><strong>PostgreSQL 16 + Citus</strong></td>
+<td>Core application state with Row-Level Security (RLS).</td>
+</tr>
+<tr>
+<td><strong>Encrypted Object Store</strong></td>
+<td><strong>MinIO Enterprise (Vault KMS)</strong></td>
+<td>Off-chain encrypted document binary storage (AES-256-GCM).</td>
+</tr>
+<tr>
+<td><strong>Vector Database</strong></td>
+<td><strong>Qdrant</strong></td>
+<td>Biometric facial embedding similarity search.</td>
+</tr>
+<tr>
+<td><strong>Permissioned Blockchain</strong></td>
+<td><strong>Hyperledger Fabric v2.5</strong></td>
+<td>Immutable certificate hash anchoring, public verification, and audit trail.</td>
+</tr>
+<tr>
+<td><strong>Hardware PKI / Sign</strong></td>
+<td><strong>WebCrypto / PKCS#11 / ECDSA P-256</strong></td>
+<td>Officer digital signature committing issuance to the blockchain.</td>
+</tr>
+</tbody></table>
+        </div>
+    </div>
+</body>
+</html>

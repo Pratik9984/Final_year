@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01 Master System Architecture | GovPulse Technical Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mermaid CDN for crisp vector diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#111827',
+                primaryColor: '#0c8fe9',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#025aa1',
+                lineColor: '#38bdf8',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #0c8fe9;
+            --primary-dark: #025aa1;
+            --accent: #10b981;
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-card: #182234;
+            --border: #233249;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, #072949 0%, #111827 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            color: #38bdf8;
+            margin: 0 0 8px 0;
+        }
+
+        .doc-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(12, 143, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(12, 143, 233, 0.4);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .print-btn {
+            background: #0c8fe9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .print-btn:hover { background: #025aa1; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: #f9fafb;
+        }
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+            color: #38bdf8;
+        }
+        h3 { margin-top: 24px; color: #7dd3fc; }
+
+        p, li { color: #d1d5db; font-size: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        th {
+            background: #182234;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        code:not(pre code) {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mermaid {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        blockquote {
+            border-left: 4px solid #0c8fe9;
+            background: rgba(12, 143, 233, 0.08);
+            margin: 16px 0;
+            padding: 12px 20px;
+            border-radius: 0 8px 8px 0;
+            color: #bae0fd;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #111827 !important;
+            }
+            .print-btn { display: none !important; }
+            .page-container { max-width: 100% !important; padding: 0 !important; }
+            .doc-header {
+                background: #f0f7ff !important;
+                border: 1px solid #bae0fd !important;
+                box-shadow: none !important;
+            }
+            .doc-header h1 { color: #025aa1 !important; }
+            .doc-header p { color: #4b5563 !important; }
+            h1, h2, h3, h4 { color: #0b416f !important; }
+            h2 { border-bottom: 2px solid #025aa1 !important; }
+            p, li { color: #1f2937 !important; }
+            table { background: #ffffff !important; border: 1px solid #d1d5db !important; }
+            th { background: #e0effe !important; color: #0b416f !important; }
+            td { border-bottom: 1px solid #e5e7eb !important; color: #1f2937 !important; }
+            pre { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
+            code:not(pre code) { background: #f1f5f9 !important; color: #0369a1 !important; }
+            .mermaid { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+            blockquote { background: #eff6ff !important; border-left: 4px solid #0284c7 !important; color: #1e3a8a !important; }
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="doc-header">
+            <div>
+                <span class="badge">Government Enterprise Specification</span>
+                <h1>01 Master System Architecture</h1>
+                <p>Master System Topology & Decoupled Trust Model • GovPulse Technical Architecture Suite • Version 1.0 (Production)</p>
+            </div>
+            <div>
+                <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+            </div>
+        </div>
+        <div class="content">
+            <h1>Master System Architecture Document</h1>
+<h2>Project: GovPulse Autonomous Digital Government Certificate Platform</h2>
+
+<p>---</p>
+
+<h2>1. Executive Vision & Core Architecture</h2>
+
+<p>GovPulse is an enterprise-grade, zero-trust digital government operations platform designed to eliminate bureaucratic friction, human error, discretionary corruption, and multi-week processing delays in issuing official government certificates (e.g., Income, Domicile, Caste, Welfare, Disability, Trade Licenses).</p>
+
+<p>The system replaces opaque, multi-layer manual clerk chains with an <strong>autonomous, self-monitoring AI workflow engine</strong> anchored by a <strong>single accountable officer checkpoint</strong> and a <strong>permissioned blockchain proof registry</strong>.</p>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   CORE ARCHITECTURAL TENETS                                 │
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1. Decoupled Trust Model: Off-Chain AI &amp; Encrypted Storage vs On-Chain Cryptographic Proofs  │
+│ 2. Strict Determinism Boundary: Probabilistic AI (Extraction) vs OPA Rego (Legal Code)      │
+│ 3. Single-Officer Accountable Checkpoint with Zero Discretionary Opacity                    │
+│ 4. Absolute Privacy (Zero PII On-Chain) with W3C Verifiable Credential Portability          │
+│ 5. Blind Algorithmic Dispatch &amp; 48-Hour Strict SLA Escrow (Anti-Corruption Engine)         │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+<p>---</p>
+
+<h2>2. High-Level System Architecture Diagram</h2>
+
+<div class="mermaid">
+flowchart TD
+    subgraph ClientTier["CLIENT & EDGE TIER (Zero-Trust)"]
+        Citizen[Citizen / Business Portal\nNext.js + WebAuthn FIDO2]
+        Officer[Officer Approval Desk\nNext.js + PKI Hardware Sign]
+        PublicVerifier[Public Verification Portal\nInstant QR / Hash Scanner]
+    end
+
+    subgraph IngressTier["INGRESS & ZERO-TRUST GATEWAY"]
+        WAF[Cloudflare / Enterprise WAF]
+        Envoy[Envoy API Gateway & Service Mesh\nmTLS + OIDC + Dynamic Rate Limiter + ABAC]
+    end
+
+    subgraph StorageTier["OFF-CHAIN SECURE STORAGE"]
+        MinIO[(MinIO Object Storage Cluster\nServer-Side AES-256-GCM Envelope Encryption)]
+        Postgres[(PostgreSQL Cluster\nRow Level Security + Citus Distributed)]
+        Redis[(Redis Enterprise Cluster\nSession Caching & Token Bucket Rate Limiting)]
+        Qdrant[(Qdrant Vector DB\nBiometric Face Embeddings)]
+        Neo4j[(Neo4j Graph Database\nIdentity Collusion & Syndicate Graphs)]
+    end
+
+    subgraph AsyncBus["ASYNCHRONOUS EVENT & WORKFLOW BUS"]
+        Kafka[Apache Kafka Event Mesh\nDocument Ingestion & Audit Topics]
+        Temporal[Temporal.io Workflow Engine\nSaga Orchestration & 48h SLA Escrow]
+    end
+
+    subgraph PythonBackend["PYTHON ASYNC MICROSERVICES BACKEND (FastAPI)"]
+        AuthService[Identity & Auth Service\nOAuth2 / OIDC / WebAuthn]
+        AppService[Application Lifecycle Service\nState Management]
+        DocAIService[Document AI Service\nLayoutLMv3 + PyMuPDF + PaddleOCR]
+        BiometricService[Biometric Identity Service\nArcFace + Cosine Similarity Engine]
+        PolicyService[Deterministic Policy Service\nOpen Policy Agent Rego Engine]
+        FraudMLService[Fraud ML & Graph Service\nIsolation Forest + Network Analysis]
+        RoutingService[Blind Algorithmic Dispatcher\nAnti-Corruption Workload Distributer]
+        OpsService[Autonomous Operations Agent\nSelf-Monitoring & Bottleneck AI]
+    end
+
+    subgraph BlockchainTier["PERMISSIONED CONSORTIUM BLOCKCHAIN"]
+        FabricPeer1[Gov Peer Node 1\nRevenue Dept]
+        FabricPeer2[Gov Peer Node 2\nInterior Dept]
+        FabricPeer3[Gov Peer Node 3\nAnti-Corruption Bureau]
+        Orderer[Raft Consensus Orderer Cluster]
+        Ledger[(Hyperledger Fabric State Ledger\nChannel: cert-registry)]
+    end
+
+    %% Connections
+    Citizen -->|TLS 1.3 + Client SHA-256| WAF
+    Officer -->|TLS 1.3 + WebAuthn/mTLS| WAF
+    PublicVerifier -->|HTTPS| WAF
+    WAF --> Envoy
+
+    Envoy --> AuthService
+    Envoy --> AppService
+    Envoy --> PublicPortalCheck[Public Verification API]
+
+    AppService --> MinIO
+    AppService --> Postgres
+    AppService --> Redis
+    AppService --> Kafka
+
+    Kafka --> Temporal
+    Temporal --> DocAIService
+    Temporal --> BiometricService
+    Temporal --> PolicyService
+    Temporal --> FraudMLService
+    Temporal --> RoutingService
+
+    DocAIService --> MinIO
+    BiometricService --> Qdrant
+    FraudMLService --> Neo4j
+    FraudMLService --> Postgres
+
+    RoutingService --> Officer
+    Officer -->|ECDSA Hardware Sign| AppService
+    AppService --> FabricPeer1
+
+    FabricPeer1 --- Orderer
+    FabricPeer2 --- Orderer
+    FabricPeer3 --- Orderer
+    FabricPeer1 --- Ledger
+
+    PublicPortalCheck --> FabricPeer1
+    Temporal --> OpsService
+</div>
+
+<p>---</p>
+
+<h2>3. End-to-End Component Lifecycle</h2>
+
+<div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor C as Citizen
+    participant G as Zero-Trust Gateway (Envoy)
+    participant S as Encrypted MinIO (S3)
+    participant W as Temporal Workflow Engine
+    participant AI as AI & Fraud Pipeline
+    participant OPA as Deterministic Rules (OPA)
+    actor O as Designated Officer
+    participant BC as Permissioned Blockchain
+    actor V as Public Verifier (Bank/Univ)
+
+    Note over C,G: 1. Zero-Trust Ingestion & Client Fingerprinting
+    C->>C: Calculate client-side SHA-256: H_doc
+    C->>G: Upload Doc + Application (TLS 1.3 + WebAuthn)
+    G->>S: Store binary with AES-256-GCM envelope encryption
+    G->>W: Initialize Certificate Saga (CertID, H_doc)
+
+    Note over W,AI: 2. Autonomous Extraction & Verification
+    W->>AI: Trigger LayoutLMv3 OCR & Key-Value Extraction
+    AI->>AI: Extract Name, Income, DOB, Seals, Bounding Boxes
+    W->>AI: Trigger ArcFace Biometric Vector Match
+    AI->>AI: Cosine similarity vs National Identity Registry
+
+    Note over W,OPA: 3. Deterministic Statutory Policy & Fraud ML
+    W->>OPA: Evaluate statutory legal rules (Rego)
+    OPA-->>W: Policy Checklist (PASS / FAIL / AUDIT_REQUIRED)
+    W->>AI: Run Isolation Forest + Neo4j Syndicate Graph ML
+    AI-->>W: Tamper Risk Score (e.g. 0.08 - LOW)
+
+    Note over W,O: 4. Blind Dispatch & Officer Checkpoint
+    W->>W: Blind Hash Allocation to single officer queue
+    W->>W: Arm 48-Hour SLA Escrow countdown
+    W->>O: Push Executive Dossier + Visual Diff View
+    O->>O: Verify Visual Diff & AI Integrity Report
+    O->>G: Approve + Cryptographic ECDSA Digital Sign (HSM)
+
+    Note over G,BC: 5. Permissioned Blockchain Anchoring
+    G->>BC: Commit State Block (Cert_Hash, Officer_Sig, Timestamp, H_doc)
+    BC-->>G: Block Confirmation (Block #104829, Tx_Hash)
+
+    Note over G,C: 6. Verifiable Credential Delivery
+    G->>C: Issue W3C Verifiable Credential PDF + Dynamic QR
+
+    Note over V,BC: 7. Public Instant Zero-Knowledge Verification
+    V->>G: Scan QR / Query CertID (Zero PII transfer)
+    G->>BC: Cryptographic Merkle Proof & Status Check
+    BC-->>V: ✅ 100% Authentic, Issued by Official PKI, Not Revoked
+</div>
+
+<p>---</p>
+
+<h2>4. Key Architectural Separation: Off-Chain vs On-Chain</h2>
+
+<p>To guarantee strict compliance with data privacy laws (e.g., GDPR, National Data Protection Acts), citizen personally identifiable information (PII) is <strong>never</strong> committed to the blockchain.</p>
+
+<pre><code class="language-">┌──────────────────────────────────────────────┐  ┌──────────────────────────────────────────────┐
+│        OFF-CHAIN LAYER (Confidential)        │  │         ON-CHAIN LAYER (Public Trust)        │
+├──────────────────────────────────────────────┤  ├──────────────────────────────────────────────┤
+│ • Full Scanned PDFs and Images               │  │ • Document SHA-256 Fingerprint ($H_{doc}$)   │
+│ • Citizen Names, Tax IDs, Addresses, Photos  │  │ • Unique Certificate Hash ($H_{cert}$)       │
+│ • Raw Financial &amp; Income Figures             │  │ • Officer PKI Public Key Fingerprint         │
+│ • AI Extracted Layout Bounding Boxes         │  │ • Officer ECDSA Cryptographic Signature      │
+│ • Temporary Processing States &amp; Sagas        │  │ • Transaction Timestamp &amp; Block Merkle Root  │
+│ • Neo4j Fraud Graph Relations                │  │ • Credential Lifecycle Status (VALID/REVOKED)│
+│                                              │  │                                              │
+│ Storage: MinIO AES-256-GCM, PostgreSQL,      │  │ Storage: Hyperledger Fabric Private Ledger   │
+│          Qdrant Vector DB                    │  │          (State Database: CouchDB)           │
+└──────────────────────────────────────────────┘  └──────────────────────────────────────────────┘</code></pre>
+
+<p>---</p>
+
+<h2>5. Architectural Quality Attributes & Non-Functional Requirements</h2>
+
+<table><thead><tr>
+<th>Metric</th>
+<th>Specification Target</th>
+<th>Architectural Enabler</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>System Throughput</strong></td>
+<td>10,000 Concurrent Submissions / min</td>
+<td>Async Python FastAPI + Kafka Event Mesh + Redis caching</td>
+</tr>
+<tr>
+<td><strong>End-to-End Latency</strong></td>
+<td>< 45 seconds (Intake to Officer Queue)</td>
+<td>Parallelized PyTorch GPU inference workers + OPA sub-millisecond evaluation</td>
+</tr>
+<tr>
+<td><strong>Public Verification Speed</strong></td>
+<td>< 800 milliseconds</td>
+<td>Zero-Knowledge index lookup on Blockchain State Cache</td>
+</tr>
+<tr>
+<td><strong>High Availability</strong></td>
+<td>99.99% Uptime (Annual downtime < 52 mins)</td>
+<td>Multi-AZ Kubernetes cluster + Raft consensus across 3+ validator peers</td>
+</tr>
+<tr>
+<td><strong>Data Integrity & Non-Repudiation</strong></td>
+<td>100% Mathematically Proven</td>
+<td>Client-side SHA-256 + Officer HSM ECDSA signatures + Blockchain Merkle Proofs</td>
+</tr>
+<tr>
+<td><strong>Discretionary Bribery Index</strong></td>
+<td>0.00 (Mathematically impossible)</td>
+<td>Blind hash dispatch + 48h SLA Escrow + Codified rejection requirements</td>
+</tr>
+</tbody></table>
+        </div>
+    </div>
+</body>
+</html>

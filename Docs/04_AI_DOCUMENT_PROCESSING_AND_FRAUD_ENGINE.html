@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04 AI Document Vision & Fraud ML | GovPulse Technical Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mermaid CDN for crisp vector diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#111827',
+                primaryColor: '#0c8fe9',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#025aa1',
+                lineColor: '#38bdf8',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #0c8fe9;
+            --primary-dark: #025aa1;
+            --accent: #10b981;
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-card: #182234;
+            --border: #233249;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, #072949 0%, #111827 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            color: #38bdf8;
+            margin: 0 0 8px 0;
+        }
+
+        .doc-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(12, 143, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(12, 143, 233, 0.4);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .print-btn {
+            background: #0c8fe9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .print-btn:hover { background: #025aa1; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: #f9fafb;
+        }
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+            color: #38bdf8;
+        }
+        h3 { margin-top: 24px; color: #7dd3fc; }
+
+        p, li { color: #d1d5db; font-size: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        th {
+            background: #182234;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        code:not(pre code) {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mermaid {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        blockquote {
+            border-left: 4px solid #0c8fe9;
+            background: rgba(12, 143, 233, 0.08);
+            margin: 16px 0;
+            padding: 12px 20px;
+            border-radius: 0 8px 8px 0;
+            color: #bae0fd;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #111827 !important;
+            }
+            .print-btn { display: none !important; }
+            .page-container { max-width: 100% !important; padding: 0 !important; }
+            .doc-header {
+                background: #f0f7ff !important;
+                border: 1px solid #bae0fd !important;
+                box-shadow: none !important;
+            }
+            .doc-header h1 { color: #025aa1 !important; }
+            .doc-header p { color: #4b5563 !important; }
+            h1, h2, h3, h4 { color: #0b416f !important; }
+            h2 { border-bottom: 2px solid #025aa1 !important; }
+            p, li { color: #1f2937 !important; }
+            table { background: #ffffff !important; border: 1px solid #d1d5db !important; }
+            th { background: #e0effe !important; color: #0b416f !important; }
+            td { border-bottom: 1px solid #e5e7eb !important; color: #1f2937 !important; }
+            pre { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
+            code:not(pre code) { background: #f1f5f9 !important; color: #0369a1 !important; }
+            .mermaid { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+            blockquote { background: #eff6ff !important; border-left: 4px solid #0284c7 !important; color: #1e3a8a !important; }
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="doc-header">
+            <div>
+                <span class="badge">Government Enterprise Specification</span>
+                <h1>04 AI Document Vision & Fraud ML</h1>
+                <p>LayoutLMv3 OCR, ArcFace & OPA Deterministic Rego • GovPulse Technical Architecture Suite • Version 1.0 (Production)</p>
+            </div>
+            <div>
+                <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+            </div>
+        </div>
+        <div class="content">
+            <h1>AI Document Processing, Policy Engine & Fraud ML Architecture</h1>
+<h2>Project: GovPulse Autonomous Digital Government Platform</h2>
+
+<p>---</p>
+
+<h2>1. Multi-Modal AI Document Vision Pipeline</h2>
+
+<p>The Document AI engine processes unstructured citizen uploads (scanned PDFs, smartphone photos of tax filings, salary slips, utility bills, notary affidavits) into structured, cryptographically bound JSON data with exact pixel coordinates.</p>
+
+<div class="mermaid">
+flowchart LR
+    InputDoc[Raw Scanned PDF / Image] --> Preprocess[PyMuPDF + OpenCV\nDeskew + De-noise + Normalization]
+    Preprocess --> OCR[PaddleOCR / TrOCR\nText & Token Extraction]
+    Preprocess --> Vision[Vision Backbone\nResNet / ViT Spatial Grid]
+    OCR --> LayoutLM[LayoutLMv3 Multimodal Transformer\nSpatial Coordinate + Token + Visual Layout]
+    Vision --> LayoutLM
+    LayoutLM --> KeyValues[Key-Value Extraction\nName, DOB, Income, Address, Seals]
+    LayoutLM --> BoundingBoxes[Interactive Bounding Box Coordinates\n[x0, y0, x1, y1] + Confidence %]
+</div>
+
+<h3>Extracted Key-Value Entity Schema & Bounding Box Payload:</h3>
+<pre><code class="language-json">{
+  &quot;document_id&quot;: &quot;doc_8f9a2b1c4d&quot;,
+  &quot;document_type&quot;: &quot;ANNUAL_SALARY_CERTIFICATE&quot;,
+  &quot;ocr_engine&quot;: &quot;LayoutLMv3-Gov-FineTuned&quot;,
+  &quot;confidence_overall&quot;: 0.982,
+  &quot;entities&quot;: {
+    &quot;applicant_name&quot;: {
+      &quot;value&quot;: &quot;Ananya Sharma&quot;,
+      &quot;confidence&quot;: 0.994,
+      &quot;bounding_box&quot;: [124, 210, 480, 245],
+      &quot;page&quot;: 1
+    },
+    &quot;gross_annual_income&quot;: {
+      &quot;value&quot;: 180000,
+      &quot;currency&quot;: &quot;INR&quot;,
+      &quot;confidence&quot;: 0.988,
+      &quot;bounding_box&quot;: [310, 540, 520, 575],
+      &quot;page&quot;: 1
+    },
+    &quot;tax_identification_number&quot;: {
+      &quot;value&quot;: &quot;ABCDE1234F&quot;,
+      &quot;confidence&quot;: 0.991,
+      &quot;bounding_box&quot;: [124, 305, 380, 340],
+      &quot;page&quot;: 1
+    },
+    &quot;notary_seal_detected&quot;: {
+      &quot;value&quot;: true,
+      &quot;seal_type&quot;: &quot;OFFICIAL_STATE_REVENUE_SEAL&quot;,
+      &quot;confidence&quot;: 0.965,
+      &quot;bounding_box&quot;: [620, 780, 840, 990],
+      &quot;page&quot;: 1
+    }
+  }
+}</code></pre>
+
+<p>---</p>
+
+<h2>2. Biometric Vector Identity Verification (ArcFace)</h2>
+
+<p>To prevent synthetic identity fraud and personation, GovPulse uses <strong>ArcFace (Additive Angular Margin Loss)</strong> to generate 512-dimensional facial embedding vectors.</p>
+
+<p>$$\text{Cosine Similarity} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|_2 \|\mathbf{v}\|_2}$$</p>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                              BIOMETRIC VERIFICATION LOGIC                               │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│ Vector A: Live Citizen Camera Selfie (Extracted during WebAuthn onboarding)             │
+│ Vector B: Scanned Photo from National ID Card (Extracted via LayoutLMv3)                │
+│                                                                                         │
+│ • If Cosine Similarity &gt;= 0.92: Identity Authenticated (PASS)                           │
+│ • If 0.80 &lt;= Cosine Similarity &lt; 0.92: Flag for Secondary Officer Biometric Check     │
+│ • If Cosine Similarity &lt; 0.80: FAIL (High Risk Fraud Alert Triggered)                   │
+└─────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+<p>---</p>
+
+<h2>3. Strict Boundary: Probabilistic AI vs. Deterministic Policy Engine</h2>
+
+<blockquote><strong>Fundamental Principle:</strong> AI is strictly restricted to <strong>data extraction, visual normalization, and anomaly scoring</strong>. AI is <strong>never</strong> permitted to invent, interpret, or decide statutory government eligibility. Eligibility decisions are executed exclusively by a 100% deterministic, auditable <strong>Open Policy Agent (OPA)</strong> rules engine.</blockquote>
+
+<div class="mermaid">
+graph TD
+    subgraph ProbabilisticZone["PROBABILISTIC ZONE (AI / ML)"]
+        RawDoc[Scanned Document] --> LayoutAI[LayoutLMv3 Extraction]
+        LiveSelfie[Citizen Selfie] --> ArcFace[ArcFace Biometric Vector]
+        LayoutAI --> ExtractedData[Extracted JSON + Confidence]
+        ArcFace --> BioScore[Biometric Match Score: 0.96]
+    end
+
+    subgraph DeterministicBoundary["DETERMINISTIC SECURITY BOUNDARY"]
+        ExtractedData --> OPA[Open Policy Agent / Rego Rules Engine]
+        BioScore --> OPA
+        GovDB[(National Registry Cross-DB Query)] --> OPA
+    end
+
+    subgraph StatutoryDecision["STATUTORY LEGAL DECISION (Auditable)"]
+        OPA --> Result{Eligible?}
+        Result -->|All Rules Satisfied| Pass[PASS: Route to Officer with AI Dossier]
+        Result -->|Statutory Rule Violated| Fail[FAIL: Codified Rejection with Legal Citation]
+        Result -->|Anomaly / Low Confidence| Flag[FLAG: Route with High-Priority Audit Banner]
+    end
+</div>
+
+<h3>Complete Open Policy Agent (Rego) Statutory Ruleset:</h3>
+
+<pre><code class="language-rego">package government.certificate.income
+
+import future.keywords.in
+
+default allow_issuance = false
+default route_to_supervisory_audit = false
+
+# Statutory Law: Karnataka State Revenue Act §14(b) - Income Certificate Rules
+MAX_PERMISSIBLE_INCOME := 250000
+MIN_RESIDENCE_YEARS := 5
+MIN_BIOMETRIC_CONFIDENCE := 0.90
+MAX_PERMISSIBLE_FRAUD_RISK := 0.20
+
+# 1. Statutory Eligibility Check (Deterministic)
+allow_issuance {
+    input.extracted_data.annual_income &lt;= MAX_PERMISSIBLE_INCOME
+    input.extracted_data.residence_duration_years &gt;= MIN_RESIDENCE_YEARS
+    input.biometric_similarity &gt;= MIN_BIOMETRIC_CONFIDENCE
+    input.fraud_ml.tamper_risk_score &lt; MAX_PERMISSIBLE_FRAUD_RISK
+    input.extracted_data.notary_seal_detected == true
+    not has_duplicate_active_certificate
+}
+
+# 2. Duplicate Certificate Protection
+has_duplicate_active_certificate {
+    input.registry_cross_check.active_certificate_exists == true
+}
+
+# 3. Mandatory Supervisory Audit Trigger
+route_to_supervisory_audit {
+    input.extracted_data.annual_income &lt;= MAX_PERMISSIBLE_INCOME
+    input.fraud_ml.tamper_risk_score &gt;= MAX_PERMISSIBLE_FRAUD_RISK
+}
+
+# 4. Detailed Statutory Reason Codes
+reasons[reason] {
+    input.extracted_data.annual_income &gt; MAX_PERMISSIBLE_INCOME
+    reason := &quot;Statutory Violation §14(b): Annual income exceeds the statutory threshold of ₹2,50,000&quot;
+}
+
+reasons[reason] {
+    input.extracted_data.residence_duration_years &lt; MIN_RESIDENCE_YEARS
+    reason := &quot;Statutory Violation §9(a): Continuous residence duration is less than the required 5 years&quot;
+}
+
+reasons[reason] {
+    input.biometric_similarity &lt; MIN_BIOMETRIC_CONFIDENCE
+    reason := &quot;Identity Verification Failure: Biometric photo match confidence below national threshold&quot;
+}</code></pre>
+
+<p>---</p>
+
+<h2>4. Fraud ML & Syndicate Graph Analysis (Isolation Forest + Neo4j)</h2>
+
+<p>GovPulse defends against sophisticated fraud rings using a two-tier detection architecture:</p>
+
+<div class="mermaid">
+flowchart TD
+    subgraph Tier1["TIER 1: DOCUMENT TAMPERING ANOMALY (Isolation Forest)"]
+        File[Uploaded PDF / Image] --> EXIF[EXIF & Metadata Analysis]
+        File --> Quant[JPEG Quantization Artifacts]
+        File --> Font[Font Alignment & Kerning Variance]
+        EXIF --> IFModel[Isolation Forest ML Model]
+        Quant --> IFModel
+        Font --> IFModel
+        IFModel --> TamperScore[Tamper Risk Score: 0.0 to 1.0]
+    end
+
+    subgraph Tier2["TIER 2: IDENTITY SYNDICATE GRAPH (Neo4j)"]
+        NewApp[New Application] --> GraphMatch[Cypher Graph Linkage Engine]
+        GraphMatch --> GraphDB[(Neo4j Fraud Graph)]
+        GraphDB --> SyndicateAlert{Shared Entity Cluster Found?}
+        SyndicateAlert -->|Shared Notary Seal / Salary Slip across 5+ Citizens| RingAlert[🔴 High Risk Syndicate Alert]
+        SyndicateAlert -->|Clean Graph Linkage| Clean[🟢 Clean Graph Score]
+    end
+</div>
+
+<h3>Neo4j Cypher Query for Cross-Application Fraud Syndicates:</h3>
+
+<pre><code class="language-cypher">// Detect if the same salary certificate hash or notary seal is reused across different citizen IDs
+MATCH (c1:Citizen)-[:SUBMITTED]-&gt;(a1:Application)-[:CONTAINS_DOC]-&gt;(d:Document)&lt;-[:CONTAINS_DOC]-(a2:Application)&lt;-[:SUBMITTED]-(c2:Citizen)
+WHERE c1.national_id &lt;&gt; c2.national_id
+RETURN c1.national_id AS Applicant1, 
+       c2.national_id AS Applicant2, 
+       d.sha256_hash AS SharedDocumentHash, 
+       d.doc_type AS ReusedDocumentType;</code></pre>
+
+<p>---</p>
+
+<h2>5. Visual Diff Inspection Engine (Officer Desk)</h2>
+
+<p>To empower the single responsible officer, GovPulse generates an <strong>Interactive Visual Diff View</strong>:</p>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                              OFFICER VISUAL DIFF WORKSPACE                              │
+├────────────────────────────────────────────┬────────────────────────────────────────────┤
+│ SCANNED ORIGINAL DOCUMENT (Interactive BBox)│ AUTO-EXTRACTED DATA &amp; REGISTRY CROSS-MATCH │
+├────────────────────────────────────────────┼────────────────────────────────────────────┤
+│ [Doc Image Preview]                        │ • Applicant Name: Ananya Sharma   [✅ 99.4%]│
+│ ┌────────────────────────────────────────┐ │ • Gross Income:   ₹1,80,000       [✅ 98.8%]│
+│ │ [BBox 1: Name: Ananya Sharma]          │ │ • Tax ID (PAN):   ABCDE1234F      [✅ Valid]│
+│ │                                        │ │ • Tax Dept Cross-Check: Verified  [✅ Match]│
+│ │ [BBox 2: Income: Rs. 1,80,000/-]       │ │ • Address Match:  100% Match      [✅ Match]│
+│ │                                        │ │ • Notary Seal:    Verified Active [✅ Valid]│
+│ │ [BBox 3: Official Seal &amp; Signature]    │ │ • Biometric Cosine Similarity:     96.4%   │
+│ └────────────────────────────────────────┘ │ • Overall Fraud Risk Score:        4.2%    │
+├────────────────────────────────────────────┴────────────────────────────────────────────┤
+│ OPA Legal Policy Status: ✅ ELIGIBLE UNDER STATUTE §14(b)                              │
+│ Action: [ 🖊️ APPROVE &amp; ECDSA DIGITAL SIGN ]   [ ❓ QUERY CITIZEN ]   [ ❌ REJECT ]     │
+└─────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        </div>
+    </div>
+</body>
+</html>

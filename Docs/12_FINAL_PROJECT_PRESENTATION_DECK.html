@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MahaGov-Pulse | Final Year Engineering Project Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --card-bg: rgba(17, 24, 39, 0.85);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent-saffron: #f97316;
+      --accent-gold: #f59e0b;
+      --accent-green: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-red: #ef4444;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #171f38 0%, #0a0e17 90%);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Presentation Header */
+    .deck-header {
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 14, 23, 0.7);
+      backdrop-filter: blur(15px);
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .seal-icon {
+      font-size: 24px;
+      background: linear-gradient(135deg, var(--accent-saffron), var(--accent-gold));
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: var(--accent-gold);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+
+    .deck-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .slide-counter {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .btn-ctrl {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-ctrl:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    /* Slide Stage */
+    .stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 60px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 90%;
+      max-width: 1200px;
+      height: 82vh;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: translateX(100px) scale(0.96);
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .slide-tag {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--accent-gold);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .slide-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .slide-content {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    /* Grid & Card Layouts inside slides */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .info-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .info-card.highlight {
+      border-color: var(--accent-gold);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .info-card.success {
+      border-color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Metric Callout */
+    .metric-box {
+      text-align: center;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+    }
+
+    .metric-val {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* Comparison Table */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .comp-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--accent-gold);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comp-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .comp-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tag-bad {
+      color: var(--accent-red);
+      font-weight: 700;
+    }
+
+    .tag-good {
+      color: var(--accent-green);
+      font-weight: 700;
+    }
+
+    /* Code Snippet Box */
+    .code-box {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: #a7f3d0;
+      line-height: 1.5;
+    }
+
+    /* Slide Footer Progress Bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-saffron), var(--accent-gold));
+      width: 8.33%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="deck-header">
+    <div class="brand">
+      <div class="seal-icon">🏛️</div>
+      <div>
+        <div class="brand-title">MahaGov-Pulse</div>
+        <div class="brand-sub">AUTONOMOUS DPI FOR MAHARASHTRA • B.E. FINAL YEAR DEFENSE</div>
+      </div>
+    </div>
+    <div class="deck-controls">
+      <span class="slide-counter" id="slideNum">Slide 01 / 12</span>
+      <button class="btn-ctrl" onclick="prevSlide()">◀ Prev</button>
+      <button class="btn-ctrl" onclick="nextSlide()">Next ▶</button>
+      <button class="btn-ctrl" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <!-- Slide Stage -->
+  <main class="stage">
+
+    <!-- SLIDE 1: Title Slide -->
+    <section class="slide active" data-slide="1">
+      <div>
+        <span class="slide-tag">Final Year B.E. Project Defense</span>
+        <h1 class="slide-title" style="font-size: 44px; margin-top: 8px;">MahaGov-Pulse: Autonomous Zero-Corruption Public Infrastructure for Maharashtra State Certificate Lifecycle</h1>
+        <p class="slide-subtitle" style="font-size: 18px; color: var(--accent-gold);">
+          A Zero-Trust, Multi-Modal AI & W3C Verifiable Credential Platform for 13 Maharashtra Government Certificates
+        </p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-3" style="margin-top: 20px;">
+          <div class="info-card highlight">
+            <div class="card-icon">🏛️</div>
+            <div class="card-title">Statutory Governance</div>
+            <div class="card-desc">Maharashtra Right to Public Services (RTS) Act 2015, MLRC 1966 & Information Technology Act 2000.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🔐</div>
+            <div class="card-title">Applied Cryptography</div>
+            <div class="card-desc">ECDSA P-256 Verifiable Credentials, AES-256-GCM Envelope Encryption & HMAC-SHA256 Blind Dispatch.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🤖</div>
+            <div class="card-title">Multi-Modal AI</div>
+            <div class="card-desc">LayoutLMv3 2D Spatial OCR, ArcFace 512D Biometrics & 24/7 Kafka Stream Anomaly Isolation.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 16px;">
+        <div><strong>Presented by:</strong> Final Year Computer Engineering Students</div>
+        <div><strong>Project Guide:</strong> Department of Computer Engineering</div>
+        <div><strong>Date:</strong> Academic Year 2025-2026</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: Problem Statement -->
+    <section class="slide" data-slide="2">
+      <div>
+        <span class="slide-tag">Problem Statement & Root Cause</span>
+        <h2 class="slide-title">The "Aaple Sarkar" Crisis: Why Legacy Portals Fail</h2>
+        <p class="slide-subtitle">Aaple Sarkar digitized paper forms into web forms, but preserved the corrupt manual bottleneck.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="info-card" style="border-color: var(--accent-red);">
+            <div class="card-icon">🔁</div>
+            <div class="card-title" style="color: var(--accent-red);">1. The 14-Time Upload Trap</div>
+            <div class="card-desc">A farmer must upload the same 7/12 extract, Aadhaar, and salary slip 14 times a year for 14 different certificates and schemes.</div>
+          </div>
+          <div class="info-card" style="border-color: var(--accent-red);">
+            <div class="card-icon">⏳</div>
+            <div class="card-title" style="color: var(--accent-red);">2. Artificial Rent-Seeking Delays</div>
+            <div class="card-desc">Clerks intentionally sit on files for 21 to 45 days until touts collect 'speed money' (लाच) to advance files to the Nayab Tahsildar.</div>
+          </div>
+          <div class="info-card" style="border-color: var(--accent-red);">
+            <div class="card-icon">📄</div>
+            <div class="card-title" style="color: var(--accent-red);">3. Rampant Photocopy Forgery</div>
+            <div class="card-desc">Physical ink stamps and forged seals are easily photoshopped. Colleges (CAP rounds) and MPSC cannot verify authenticity offline.</div>
+          </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 24px; background: rgba(239, 68, 68, 0.06); border-color: rgba(239, 68, 68, 0.3);">
+          <strong>The Core Failure:</strong> Current portals automate the <em>filing</em> of forms, but automate <strong>zero percent</strong> of the statutory evaluation or dispatch decisions.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Proposed Solution -->
+    <section class="slide" data-slide="3">
+      <div>
+        <span class="slide-tag">Proposed Solution & Core Architecture</span>
+        <h2 class="slide-title">MahaGov-Pulse: Decoupled Trust Architecture</h2>
+        <p class="slide-subtitle">Separating statutory policy evaluation from human discretion using a 3-layer decoupled model.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="info-card success">
+            <div class="card-icon">👁️</div>
+            <div class="card-title">1. AI Vision & Ingestion</div>
+            <div class="card-desc">
+              • LayoutLMv3 spatial parser<br/>
+              • PDF tool tamper detector<br/>
+              • Syndicate middleman graph<br/>
+              • "Once-Only" MahaVault
+            </div>
+          </div>
+          <div class="info-card highlight">
+            <div class="card-icon">⚖️</div>
+            <div class="card-title">2. Deterministic OPA Rego</div>
+            <div class="card-desc">
+              • Zero human discretion<br/>
+              • MLRC crop yield formulas<br/>
+              • BARTI deemed dates (1950/67)<br/>
+              • EWS &lt; ₹8L asset ceiling
+            </div>
+          </div>
+          <div class="info-card success">
+            <div class="card-icon">🔗</div>
+            <div class="card-title">3. Sovereign State Ledger</div>
+            <div class="card-desc">
+              • ECDSA P-256 digital signature<br/>
+              • SHA-256 Merkle root anchor<br/>
+              • Offline QR verification<br/>
+              • 48-Hour Hard SLA Escrow
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-4" style="margin-top: 24px;">
+          <div class="metric-box">
+            <div class="metric-val">13 in 1</div>
+            <div class="metric-label">Unified Certificates</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">0</div>
+            <div class="metric-label">Re-Uploads Needed</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">48h</div>
+            <div class="metric-label">Hard SLA Limit</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">100%</div>
+            <div class="metric-label">Offline Verifiable</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 18px; text-align: center;">
+          <a href="SYSTEM_ARCHITECTURE_DIAGRAM.svg" target="_blank" class="btn-ctrl" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: var(--accent-gold); color: black; font-weight: 700;">
+            📐 Open High-Resolution System Architecture Diagram (SVG)
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: MahaVault ("Once-Only" Storage) -->
+    <section class="slide" data-slide="4">
+      <div>
+        <span class="slide-tag">Citizen Data Sovereignty</span>
+        <h2 class="slide-title">MahaVault: Sovereign "Once-Only" Document Locker</h2>
+        <p class="slide-subtitle">Compliant with the Digital Personal Data Protection (DPDP) Act 2023 & Zero-PII principles.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <h3 style="font-size: 18px; color: var(--accent-gold); margin-bottom: 12px;">Cryptographic Security Flow</h3>
+            <div class="info-card" style="margin-bottom: 14px;">
+              <strong>1. Zero-PII Salting & Hashing:</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Aadhaar & PAN are never stored in plaintext. They are salted and stored as SHA-256 digests.</div>
+            </div>
+            <div class="info-card" style="margin-bottom: 14px;">
+              <strong>2. Envelope Encryption (AES-256-GCM):</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Each document is encrypted with a unique Data Encryption Key (DEK). The DEK is encrypted under a state Key Encryption Key (KEK).</div>
+            </div>
+            <div class="info-card">
+              <strong>3. Sovereign Auto-Fetch:</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Applying for a new certificate takes 1 click; the system pulls pre-verified Form 16, 7/12, and SLC automatically.</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="font-size: 18px; color: var(--accent-gold); margin-bottom: 12px;">Active MahaVault Dossier Example</h3>
+            <div class="code-box">
+{
+  "vault_id": "VAULT-CIT-PUNE-1001",
+  "owner": "Rahul Suresh Patil",
+  "aadhaar_hash": "SHA256:7f83b1657ff1fc53...",
+  "verified_assets": [
+    {
+      "type": "LAND_7_12",
+      "survey_no": "142/1, Wagholi",
+      "area_hectares": 1.8,
+      "verifier": "MAHABHULEKH_API"
+    },
+    {
+      "type": "FORM_16",
+      "gross_income": 180000,
+      "pan_hash": "SHA256:8c7b6a5f4e...",
+      "verifier": "ITD_EFILING_API"
+    }
+  ],
+  "manual_uploads_required": 0
+}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: Deterministic Policy Engine -->
+    <section class="slide" data-slide="5">
+      <div>
+        <span class="slide-tag">Eliminating Bureaucratic Discretion</span>
+        <h2 class="slide-title">Deterministic OPA Policy Engine: 13 Statutory Codes</h2>
+        <p class="slide-subtitle">Codifying Maharashtra Land Revenue Code 1966 & Government Resolutions into automated rules.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="info-card">
+            <h3 style="font-size: 16px; color: var(--accent-gold); margin-bottom: 8px;">Statutory Formula: Alpabhoodharak Farmer</h3>
+            <div class="code-box" style="margin-bottom: 12px;">
+# Maharashtra Land Revenue Code §148
+effective_dryland = unirrigated_ha + (irrigated_ha * 2.0)
+is_alpabhoodharak = (effective_dryland <= 2.0)
+            </div>
+            <div class="card-desc">Prevents talathis from demanding bribes to declare well-irrigated farmland as dryland.</div>
+          </div>
+
+          <div class="info-card">
+            <h3 style="font-size: 16px; color: var(--accent-gold); margin-bottom: 8px;">Statutory Deemed Dates: Caste Validity (BARTI)</h3>
+            <div class="code-box" style="margin-bottom: 12px;">
+# Maharashtra Act No. XXIII of 2001
+CUTOFF_SC   = "1950-08-10" # Presidential Order
+CUTOFF_VJNT = "1961-11-21" # Maharashtra GR
+CUTOFF_OBC  = "1967-10-13" # Enactment Date
+            </div>
+            <div class="card-desc">Deterministic lineage verification eliminates arbitrary rejections by scrutiny committee clerks.</div>
+          </div>
+        </div>
+
+        <div class="info-card highlight" style="margin-top: 20px;">
+          <strong>Codified Statutory Rejections:</strong> Officers can <em>never</em> type custom rejection messages. They must select from a codified registry (`MAH_REV_RTS_INC_01`, `MAH_AGRI_ALPA_REJ_01`, etc.) with statutory citations anchored to the state ledger.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Anti-Corruption & Blind Dispatch -->
+    <section class="slide" data-slide="6">
+      <div>
+        <span class="slide-tag">Breaking Tout & Middleman Collusion</span>
+        <h2 class="slide-title">Blind Algorithmic Dispatch & 48-Hour Hard SLA Escrow</h2>
+        <p class="slide-subtitle">Mathematical pseudo-random assignment prevents cherry-picking; hard escrow enforces accountability.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="info-card">
+            <h3 style="font-size: 16px; color: var(--accent-gold); margin-bottom: 8px;">Blind Algorithmic Dispatch</h3>
+            <div class="code-box" style="margin-bottom: 12px;">
+# HMAC-SHA256 Pseudo-Random District Shuffle
+seed = HMAC_SHA256(SecretKey, ApplicantID + Hour)
+assigned_officer = ActiveNayabTahsildars[seed % N]
+            </div>
+            <div class="card-desc">
+              • Neither applicant nor officer knows assignment in advance.<br/>
+              • Local agents/touts cannot get files sent to 'friendly' clerks.<br/>
+              • Workload balanced evenly across all officers in the district.
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3 style="font-size: 16px; color: var(--accent-gold); margin-bottom: 8px;">48-Hour Hard SLA Escrow</h3>
+            <div class="code-box" style="margin-bottom: 12px;">
+# RTS Act 2015 Auto-Escalation State Machine
+if now() > sla_due_at:
+    app.status = "ESCALATED"
+    app.assigned_officer = SDO_ID
+    AuditLedger.log("SLA_BREACH_PENALTY", officer_id)
+            </div>
+            <div class="card-desc">
+              • Real-time per-second timer countdown.<br/>
+              • Automatic escalation to Sub-Divisional Officer (SDO).<br/>
+              • Administrative demerit permanently logged on State Ledger.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Verifiable Credentials & PDF Engine -->
+    <section class="slide" data-slide="7">
+      <div>
+        <span class="slide-tag">Cryptographic Trust & Forgery Elimination</span>
+        <h2 class="slide-title">ECDSA P-256 Digital Certificates & Official PDF Engine</h2>
+        <p class="slide-subtitle">W3C Verifiable Credentials with offline QR verification and programmatic ReportLab rendering.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="info-card">
+            <h3 style="font-size: 16px; color: var(--accent-gold); margin-bottom: 8px;">W3C Verifiable Credential Structure</h3>
+            <div class="code-box" style="font-size: 11px;">
+{
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "id": "urn:mahagov:cert:MAH-CERT-2026-98124",
+  "type": ["VerifiableCredential", "IncomeCertificate"],
+  "issuer": "did:mahagov:officer:OFF-NT-HAVELI-01",
+  "credentialSubject": {
+    "annual_income": 185000.0,
+    "financial_year": "2025-2026"
+  },
+  "proof": {
+    "type": "EcdsaSecp256r1Signature2019",
+    "jws": "eyJhbGciOiJFUzI1NiIsImNyaXQ...",
+    "merkle_root": "4a5c6e8d1f2a3b4c5d..."
+  }
+}
+            </div>
+          </div>
+
+          <div class="info-card success">
+            <h3 style="font-size: 16px; color: var(--accent-green); margin-bottom: 8px;">Official PDF & QR Code Engine</h3>
+            <div class="card-desc" style="font-size: 13px; line-height: 1.8;">
+              • <strong>ReportLab Programmatic Rendering:</strong> High-resolution vector PDF generated dynamically.<br/>
+              • <strong>Maharashtra State Seal:</strong> Dual bronze/navy border, watermark & statutory disclaimer.<br/>
+              • <strong>High-Density QR Code:</strong> Contains the entire offline verification payload.<br/>
+              • <strong>100% Offline Verifiable:</strong> CAP rounds (CET/NEET) can verify authenticity without internet access!
+            </div>
+            <div style="margin-top: 14px; text-align: center;">
+              <span class="btn-ctrl" style="background: var(--accent-gold); color: black;">Verified via State Ledger</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: MahaDBT Scheme Matcher -->
+    <section class="slide" data-slide="8">
+      <div>
+        <span class="slide-tag">Direct Citizen Welfare Impact</span>
+        <h2 class="slide-title">MahaDBT Autonomous Welfare Scheme Matcher</h2>
+        <p class="slide-subtitle">Connecting verified certificates directly to government welfare without separate application paperwork.</p>
+      </div>
+
+      <div class="slide-content">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Scheme Name (महाराष्ट्र कल्याणकारी योजना)</th>
+              <th>Department</th>
+              <th>Statutory Benefit</th>
+              <th>Required Verified Certificates</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Mukhyamantri Majhi Ladki Bahin</strong></td>
+              <td>Women & Child Dev</td>
+              <td><span class="tag-good">₹1,500 / month</span></td>
+              <td>Domicile + Income &lt; ₹2.5L + Female</td>
+              <td><span class="tag-good">Auto-Matched</span></td>
+            </tr>
+            <tr>
+              <td><strong>Rajarshi Shahu Maharaj EBC Scheme</strong></td>
+              <td>Higher & Tech Edu</td>
+              <td><span class="tag-good">50% Tuition Fee Waiver</span></td>
+              <td>Domicile + Income &le; ₹8.0L</td>
+              <td><span class="tag-good">✓ ELIGIBLE</span></td>
+            </tr>
+            <tr>
+              <td><strong>Namo Shetkari Mahasanman + PM-KISAN</strong></td>
+              <td>Agriculture Dept</td>
+              <td><span class="tag-good">₹12,000 / year</span></td>
+              <td>7/12 Land Record Extract</td>
+              <td><span class="tag-good">✓ ELIGIBLE</span></td>
+            </tr>
+            <tr>
+              <td><strong>Dr. Punjabrao Deshmukh Hostel Allowance</strong></td>
+              <td>Higher Education</td>
+              <td><span class="tag-good">Up to ₹30,000 / year</span></td>
+              <td>Alpabhoodharak Farmer + Domicile</td>
+              <td><span class="tag-good">Auto-Matched</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-card highlight" style="margin-top: 20px;">
+          <strong>1-Click Direct Benefit Transfer (DBT):</strong> When eligible, citizen clicks one button to queue payments directly via <strong>Aadhaar Payment Bridge (APB)</strong> with zero physical office visits.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: Multi-Modal Document AI -->
+    <section class="slide" data-slide="9">
+      <div>
+        <span class="slide-tag">Machine Learning & Computer Vision</span>
+        <h2 class="slide-title">LayoutLMv3 Spatial OCR & Multi-Modal Fraud Detection</h2>
+        <p class="slide-subtitle">Jointly modeling text tokens, 2D spatial coordinates, and image patches to detect forged documents.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="info-card">
+            <div class="card-icon">📐</div>
+            <div class="card-title">2D Bounding Boxes</div>
+            <div class="card-desc">Extracts normalized $[x_0, y_0, x_1, y_1]$ coordinates for salary, PAN, and seal locations with 98.6% confidence.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🔍</div>
+            <div class="card-title">Tamper Detection</div>
+            <div class="card-desc">Inspects PDF raw byte streams for editing artifacts (Photoshop, GIMP, Canva metadata tags) and flags suspicious alterations.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🕸️</div>
+            <div class="card-title">Syndicate Graph Analysis</div>
+            <div class="card-desc">Identifies tout collusion by detecting clusters of unrelated applications sharing identical phone numbers or bank accounts.</div>
+          </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 20px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--accent-gold);">
+          AI Risk Score Formula: RiskScore = (0.45 * TamperWeight) + (0.35 * MismatchWeight) + (0.20 * SyndicateWeight)<br/>
+          Applications with RiskScore &gt; 0.70 are automatically quarantined for executive audit.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: Comparative Impact Analysis -->
+    <section class="slide" data-slide="10">
+      <div>
+        <span class="slide-tag">Quantitative Impact & Evaluation</span>
+        <h2 class="slide-title">MahaGov-Pulse vs. Aaple Sarkar: Comparative Matrix</h2>
+        <p class="slide-subtitle">Side-by-side empirical performance metrics demonstrating radical improvement.</p>
+      </div>
+
+      <div class="slide-content">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Evaluation Parameter</th>
+              <th>Current System (Aaple Sarkar)</th>
+              <th>MahaGov-Pulse (Our Platform)</th>
+              <th>Improvement Factor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Turnaround Time (TAT)</strong></td>
+              <td class="tag-bad">15 to 45 Days</td>
+              <td class="tag-good">Instant to 48 Hours</td>
+              <td><strong>15x to 20x Faster</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Document Re-Uploads</strong></td>
+              <td class="tag-bad">Every Single Application (10-14x/yr)</td>
+              <td class="tag-good">Zero (MahaVault "Once-Only")</td>
+              <td><strong>100% Elimination</strong></td>
+            </tr>
+            <tr>
+              <td><strong>File Assignment Mechanism</strong></td>
+              <td class="tag-bad">Manual Desk Assignment (Collusion prone)</td>
+              <td class="tag-good">Blind HMAC-SHA256 Dispatch</td>
+              <td><strong>100% Anonymized</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Rejection Justification</strong></td>
+              <td class="tag-bad">Free-form subjective text</td>
+              <td class="tag-good">Codified Statutory Rejection Codes</td>
+              <td><strong>Zero Arbitrary Delays</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Verification Capability</strong></td>
+              <td class="tag-bad">Requires central database connection</td>
+              <td class="tag-good">Offline ECDSA P-256 QR Verification</td>
+              <td><strong>Offline Sovereign</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Annual Renewal Effort</strong></td>
+              <td class="tag-bad">Fill 5-page form from scratch</td>
+              <td class="tag-good">1-Click Smart Renewal</td>
+              <td><strong>1 Second (Zero Typing)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: Testing & Verification -->
+    <section class="slide" data-slide="11">
+      <div>
+        <span class="slide-tag">Verification & Quality Assurance</span>
+        <h2 class="slide-title">Comprehensive Automated Test Suite: 15/15 Passed</h2>
+        <p class="slide-subtitle">100% pass rate across unit, cryptographic, statutory policy, and multi-modal AI test suites.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="code-box" style="font-size: 11px;">
+pytest tests/ -v
+============================= test session starts =============================
+tests/test_ai_fraud_engine.py::test_layoutlm_document_extraction PASSED  [  6%]
+tests/test_ai_fraud_engine.py::test_arcface_biometric_matching PASSED    [ 13%]
+tests/test_ai_fraud_engine.py::test_fraud_tamper_detection PASSED        [ 20%]
+tests/test_ai_fraud_engine.py::test_syndicate_graph_collusion PASSED     [ 26%]
+tests/test_ai_fraud_engine.py::test_autonomous_ops_agent PASSED          [ 33%]
+tests/test_extended_policies.py::test_caste_validity_policy PASSED       [ 40%]
+tests/test_extended_policies.py::test_ferfar_mutation_policy PASSED      [ 46%]
+tests/test_extended_policies.py::test_crs_vital_statistics_policies PASSED [ 53%]
+tests/test_extended_policies.py::test_employment_registration_policy PASSED [ 60%]
+tests/test_mahagov_pulse.py::test_system_health PASSED                   [ 66%]
+tests/test_mahagov_pulse.py::test_zero_trust_cryptography PASSED         [ 73%]
+tests/test_mahagov_pulse.py::test_deterministic_policy_engine PASSED     [ 80%]
+tests/test_mahagov_pulse.py::test_end_to_end_citizen_to_officer_workflow PASSED [ 86%]
+tests/test_pdf_and_schemes.py::test_pdf_generation_valid_bytes PASSED    [ 93%]
+tests/test_pdf_and_schemes.py::test_scheme_matcher_eligibility PASSED    [100%]
+======================= 15 passed in 1.87s =======================
+          </div>
+
+          <div>
+            <h3 style="font-size: 16px; color: var(--accent-gold); margin-bottom: 12px;">Test Coverage Highlights</h3>
+            <div class="info-card success" style="margin-bottom: 12px;">
+              <strong>1. Cryptographic Correctness:</strong> Validates AES-256-GCM encryption round-trip, ECDSA P-256 signature verification, and Merkle tree roots.
+            </div>
+            <div class="info-card success" style="margin-bottom: 12px;">
+              <strong>2. Statutory Policy Fidelity:</strong> Tests edge cases for Alpabhoodharak land limits, BARTI deemed dates, and NCL 3-year income rules.
+            </div>
+            <div class="info-card success">
+              <strong>3. PDF & QR Integrity:</strong> Confirms binary `%PDF-` generation with embedded QR codes and digital signature blocks.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: Conclusion & Viva Defense -->
+    <section class="slide" data-slide="12">
+      <div>
+        <span class="slide-tag">Conclusion & Future Scope</span>
+        <h2 class="slide-title">Conclusion: Ready for State-Wide Production Deployment</h2>
+        <p class="slide-subtitle">A production-ready digital public infrastructure that restores citizen trust in governance.</p>
+      </div>
+
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="info-card success">
+            <div class="card-icon">🚀</div>
+            <div class="card-title">Production Readiness</div>
+            <div class="card-desc">Fully functional backend, bilingual web client, verified database models, and active background daemon ready for demonstration.</div>
+          </div>
+          <div class="info-card highlight">
+            <div class="card-icon">📜</div>
+            <div class="card-title">Legal Compliance</div>
+            <div class="card-desc">Conforms 100% to Maharashtra RTS Act 2015, IT Act 2000, and the Digital Personal Data Protection (DPDP) Act 2023.</div>
+          </div>
+          <div class="info-card success">
+            <div class="card-icon">🎯</div>
+            <div class="card-title">Scalability</div>
+            <div class="card-desc">Kafka event streams and Kubernetes pod auto-scaling allow handling millions of simultaneous applications during CAP admission rounds.</div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 36px;">
+          <h3 style="font-size: 24px; color: var(--accent-gold); margin-bottom: 8px;">Thank You! Questions & Live Demonstration</h3>
+          <p style="color: var(--text-muted); font-size: 14px;">Live System Running at: <code>http://127.0.0.1:8000/</code></p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const active = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (active) active.classList.add('active');
+
+      document.getElementById('slideNum').innerText = `Slide ${String(currentSlide).padStart(2, '0')} / ${totalSlides}`;
+      document.getElementById('progressBar').style.width = `${(currentSlide / totalSlides) * 100}%`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

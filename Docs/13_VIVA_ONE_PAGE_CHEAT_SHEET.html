@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MahaGov-Pulse | 1-Page Viva Defense Cheat Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    @media print {
+      body { font-size: 9pt; }
+      .no-print { display: none !important; }
+      @page { margin: 8mm; size: A4 portrait; }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.35;
+      color: #0f172a;
+      background: #f8fafc;
+      padding: 12px;
+    }
+
+    .sheet {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 18pt;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .sub {
+      font-size: 9pt;
+      color: #d97706;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .pitch-box {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 8px 12px;
+      font-size: 9pt;
+      margin-bottom: 12px;
+      border-radius: 4px;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+      margin-bottom: 10px;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 4px 6px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .mini-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 8.5pt;
+    }
+
+    .mini-card strong { color: #0f172a; }
+
+    ol {
+      padding-left: 18px;
+      font-size: 8.5pt;
+    }
+
+    li { margin-bottom: 3px; }
+
+    .btn-print {
+      background: #f59e0b;
+      color: black;
+      font-weight: 700;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sheet">
+    <div class="header-bar">
+      <div>
+        <div class="title">MahaGov-Pulse: 1-Page Viva Defense Cheat Sheet</div>
+        <div class="sub">FINAL YEAR B.E. COMPUTER ENGINEERING • BILINGUAL MAHARASHTRA DPI</div>
+      </div>
+      <button class="btn-print no-print" onclick="window.print()">🖨️ Print (A4)</button>
+    </div>
+
+    <!-- 30s Pitch -->
+    <div class="pitch-box">
+      <strong>⏱️ 30-Second Elevator Pitch:</strong>
+      "MahaGov-Pulse is an autonomous, zero-corruption Digital Public Infrastructure for Maharashtra citizen certificates. Current portals like Aaple Sarkar merely digitized paper forms into web forms, but preserved the corrupt manual bottleneck—forcing citizens to re-upload documents 14 times a year and wait 21 to 45 days. We solved this through a <strong>Decoupled Trust Model</strong>: (1) <strong>MahaVault</strong> eliminates repeated uploads using AES-256-GCM envelope encryption; (2) <strong>Deterministic OPA Rego Engine</strong> evaluates 95% of statutory rules automatically; (3) <strong>Blind Algorithmic Dispatch (HMAC-SHA256)</strong> randomly assigns files across the district pool to eliminate clerk collusion; (4) <strong>48-Hour Hard SLA Escrow</strong> auto-escalates overdue files to SDOs; and (5) <strong>W3C Verifiable Credentials</strong> with ECDSA P-256 signatures allow offline QR verification by universities (CET/NEET CAP rounds) without central server calls."
+    </div>
+
+    <!-- Buzzwords Table -->
+    <h3>🔑 Key Technical Buzzwords & Quick Answers</h3>
+    <table>
+      <thead>
+        <tr><th>Concept</th><th>Examiner Question</th><th>1-Sentence Definitive Answer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Decoupled Trust Model</strong></td><td>Core architectural innovation?</td><td>Separates ingestion, statutory policy evaluation, and signing into independent layers so no clerk can manipulate decisions.</td></tr>
+        <tr><td><strong>"Once-Only" MahaVault</strong></td><td>How are re-uploads eliminated?</td><td>Verified once, encrypted with AES-256-GCM, and auto-linked to subsequent applications by SHA-256 content hashes.</td></tr>
+        <tr><td><strong>Deterministic OPA Rego</strong></td><td>How is human discretion eliminated?</td><td>Open Policy Agent evaluates statutory formulas (MLRC crop yield, BARTI cutoffs, EWS ₹8L) before any human sees the file.</td></tr>
+        <tr><td><strong>Blind Dispatch</strong></td><td>How do you stop clerk bribery?</td><td><code>HMAC-SHA256(SecretKey, ApplicantID + Hour) % N</code> pseudo-randomly assigns files across district officers, preventing cherry-picking.</td></tr>
+        <tr><td><strong>48h Hard SLA Escrow</strong></td><td>What happens when deadline expires?</td><td>Automated state machine locks the overdue officer's queue, escalates the file to the SDO, and logs an administrative demerit on the State Ledger.</td></tr>
+        <tr><td><strong>ECDSA P-256 vs RSA</strong></td><td>Why ECDSA over RSA?</td><td>A 256-bit ECDSA key provides equivalent security to a 3072-bit RSA key, producing a compact 64-byte signature that fits in a 2D QR code.</td></tr>
+        <tr><td><strong>LayoutLMv3 Multi-Modal AI</strong></td><td>Why not simple Tesseract OCR?</td><td>LayoutLMv3 models text tokens, 2D bounding boxes, and visual image patches jointly to distinguish gross income from deductions.</td></tr>
+        <tr><td><strong>MahaDBT Scheme Matcher</strong></td><td>Real citizen welfare impact?</td><td>Matches issued certificates to schemes like <em>Majhi Ladki Bahin</em> (₹1,500/mo) and <em>EBC</em> (50% fee waiver) for 1-click apply via Aadhaar Payment Bridge.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="grid-2">
+      <!-- Statutory Citations -->
+      <div>
+        <h3>📜 Statutory Citations to Quote</h3>
+        <div class="mini-card" style="margin-bottom: 6px;">
+          <strong>Maharashtra RTS Act, 2015:</strong><br/>
+          • <strong>§4</strong>: Statutory duty to deliver services within prescribed timelines.<br/>
+          • <strong>§8</strong>: Mandatory financial penalty on delayed officers.<br/>
+          • <strong>§10</strong>: Right of appeal to 1st (Tahsildar) & 2nd (SDO) authorities.
+        </div>
+        <div class="mini-card">
+          <strong>Maharashtra Land Revenue Code, 1966:</strong><br/>
+          • <strong>§148</strong>: Maintenance of Record of Rights (7/12 & 8-A).<br/>
+          • <strong>§150</strong>: Mutation (Ferfar) procedure & 15-day notice period.<br/>
+          • <strong>BARTI Deemed Dates</strong>: SC 1950, VJNT 1961, OBC 1967.
+        </div>
+      </div>
+
+      <!-- Demo Checklist -->
+      <div>
+        <h3>🎯 5-Step Examiner Live Demo Checklist</h3>
+        <ol>
+          <li><strong>MahaVault ("Once-Only"):</strong> Show 4 pre-verified documents (7/12, Form 16, Aadhaar, SLC) & click <em>View AI Bounding Boxes</em>.</li>
+          <li><strong>1-Click Application:</strong> Apply for Income Certificate (point out income & land data auto-filled with zero manual uploads).</li>
+          <li><strong>Officer Desk:</strong> Switch to Nayab Tahsildar, show blind queue (no cherry-picking), and click <em>Sign & Issue</em> (ECDSA P-256).</li>
+          <li><strong>Public Verifier & PDF:</strong> Enter <code>MAH-CERT-2026-98124</code>, show trust badge, click <em>Download Official Signed PDF</em> & scan QR via camera.</li>
+          <li><strong>MahaDBT & Ops AI:</strong> Click <em>1-Click Apply via DBT</em> for 50% EBC waiver, then simulate 400% surge on Ops AI for auto-healing.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

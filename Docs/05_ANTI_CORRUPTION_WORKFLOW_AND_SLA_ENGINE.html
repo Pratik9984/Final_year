@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05 Anti-Corruption & SLA Escrow | GovPulse Technical Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mermaid CDN for crisp vector diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#111827',
+                primaryColor: '#0c8fe9',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#025aa1',
+                lineColor: '#38bdf8',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #0c8fe9;
+            --primary-dark: #025aa1;
+            --accent: #10b981;
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-card: #182234;
+            --border: #233249;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, #072949 0%, #111827 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            color: #38bdf8;
+            margin: 0 0 8px 0;
+        }
+
+        .doc-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(12, 143, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(12, 143, 233, 0.4);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .print-btn {
+            background: #0c8fe9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .print-btn:hover { background: #025aa1; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: #f9fafb;
+        }
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+            color: #38bdf8;
+        }
+        h3 { margin-top: 24px; color: #7dd3fc; }
+
+        p, li { color: #d1d5db; font-size: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        th {
+            background: #182234;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        code:not(pre code) {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mermaid {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        blockquote {
+            border-left: 4px solid #0c8fe9;
+            background: rgba(12, 143, 233, 0.08);
+            margin: 16px 0;
+            padding: 12px 20px;
+            border-radius: 0 8px 8px 0;
+            color: #bae0fd;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #111827 !important;
+            }
+            .print-btn { display: none !important; }
+            .page-container { max-width: 100% !important; padding: 0 !important; }
+            .doc-header {
+                background: #f0f7ff !important;
+                border: 1px solid #bae0fd !important;
+                box-shadow: none !important;
+            }
+            .doc-header h1 { color: #025aa1 !important; }
+            .doc-header p { color: #4b5563 !important; }
+            h1, h2, h3, h4 { color: #0b416f !important; }
+            h2 { border-bottom: 2px solid #025aa1 !important; }
+            p, li { color: #1f2937 !important; }
+            table { background: #ffffff !important; border: 1px solid #d1d5db !important; }
+            th { background: #e0effe !important; color: #0b416f !important; }
+            td { border-bottom: 1px solid #e5e7eb !important; color: #1f2937 !important; }
+            pre { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
+            code:not(pre code) { background: #f1f5f9 !important; color: #0369a1 !important; }
+            .mermaid { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+            blockquote { background: #eff6ff !important; border-left: 4px solid #0284c7 !important; color: #1e3a8a !important; }
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="doc-header">
+            <div>
+                <span class="badge">Government Enterprise Specification</span>
+                <h1>05 Anti-Corruption & SLA Escrow</h1>
+                <p>Blind Dispatch, 48h SLA Escrow & Ops Intelligence • GovPulse Technical Architecture Suite • Version 1.0 (Production)</p>
+            </div>
+            <div>
+                <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+            </div>
+        </div>
+        <div class="content">
+            <h1>Anti-Corruption Workflow, Blind Dispatch & SLA Escrow Architecture</h1>
+<h2>Project: GovPulse Autonomous Digital Government Platform</h2>
+
+<p>---</p>
+
+<h2>1. Anti-Corruption Core Strategy</h2>
+
+<p>Traditional government bureaucracies suffer from three primary corruption vectors:</p>
+<p>1. <strong>Collusive Evaluator Selection</strong>: Citizens pay bribes to ensure their file is routed to a specific corrupt clerk.</p>
+<p>2. <strong>Deliberate Delay (Rent-Seeking)</strong>: Officers intentionally stall files for weeks until an informal expediting fee is paid.</p>
+<p>3. <strong>Discretionary Opacity</strong>: Applications are rejected with vague, undocumented excuses, forcing citizens into informal negotiations.</p>
+
+<p>GovPulse introduces three mathematically enforceable, automated counter-mechanisms:</p>
+
+<pre><code class="language-">┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                           GOVPULSE ANTI-CORRUPTION PILLARS                              │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1. Blind Algorithmic Dispatch: Cryptographic pseudo-random assignment prevents collusion│
+│ 2. 48-Hour Strict SLA Escrow: Hard-locked Temporal state machine auto-escalates delays │
+│ 3. Codified Rejection Auditing: Every rejection requires statutory legal code on-chain │
+│ 4. Autonomous Operations AI: Self-monitoring anomaly agent detects localized bottlenecks│
+└─────────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+<p>---</p>
+
+<h2>2. Blind Algorithmic Dispatching Protocol</h2>
+
+<p>When an application passes AI extraction and OPA policy checks, it is dispatched via <strong>Deterministic Blind Hashing</strong>:</p>
+
+<div class="mermaid">
+flowchart TD
+    App[Validated Application\nAppID + Category + District] --> HashGen[Compute Cryptographic Dispatch Seed\nSeed = HMAC-SHA256(SecretSalt, AppID || TimestampHour)]
+    HashGen --> QueueLookup[Query Active Officer Pool in District\nPool = {Officer_1, Officer_2, ..., Officer_N}]
+    QueueLookup --> RoundRobin[Filter by Maximum Caseload & Rank]
+    RoundRobin --> SelectOfficer[Assign Designated Responsible Officer\nIndex = Seed mod N]
+    SelectOfficer --> LockAssignment[Lock Dossier to Officer PKI ID\nNo other officer or clerk can access or transfer]
+</div>
+
+<h3>Mathematical Guarantee:</h3>
+<ul>
+<li>The citizen <strong>cannot</strong> request a specific officer.</li>
+<li>The officer <strong>cannot</strong> cherry-pick files from a general queue.</li>
+<li>Re-routing is forbidden except via automated SLA timeout escalation.</li>
+</ul>
+
+<p>---</p>
+
+<h2>3. Temporal.io 48-Hour Strict SLA Escrow State Machine</h2>
+
+<div class="mermaid">
+stateDiagram-v2
+    [*] --> Intake_Validated: Application Submitted & Hashed
+    Intake_Validated --> AI_Processing: Auto-Trigger AI & OPA Pipeline
+    AI_Processing --> Officer_Escrow: Blind Assigned to Single Officer
+    
+    state Officer_Escrow {
+        [*] --> Timer_48H_Armed: SLA Countdown Clock Initiated
+        Timer_48H_Armed --> Warning_36H: 36 Hours Elapsed (SMS/Email Warning to Officer)
+        Warning_36H --> SLA_Violated: 48 Hours Elapsed (No Action Taken)
+        
+        Timer_48H_Armed --> Approved_Signed: Officer Approves + ECDSA Signs
+        Timer_48H_Armed --> Query_Raised: Officer Requests Specific Doc Clarification
+        Timer_48H_Armed --> Statutory_Rejected: Officer Rejects with Legal Citation
+    }
+
+    Approved_Signed --> Blockchain_Anchored: Mint State Block on Ledger
+    Blockchain_Anchored --> Certificate_Issued: Deliver W3C Credential to Citizen
+    Certificate_Issued --> [*]
+
+    Query_Raised --> Citizen_Clarification_Hold: Pause SLA Clock (Max 72h for Citizen)
+    Citizen_Clarification_Hold --> Officer_Escrow: Citizen Uploads Doc -> Restart 24h SLA
+
+    Statutory_Rejected --> Blockchain_Anchored: Commit Codified Rejection to Ledger
+    
+    SLA_Violated --> Auto_Supervisory_Escalation: Auto Re-route to District Magistrate Queue
+    Auto_Supervisory_Escalation --> Administrative_Demerit: Log Demerit on Public Ops Dashboard
+    Auto_Supervisory_Escalation --> Officer_Escrow: Senior Officer Action
+</div>
+
+<p>---</p>
+
+<h2>4. Codified Statutory Rejection Protocol</h2>
+
+<p>Officers are strictly prohibited from entering free-form text rejections. To reject an application, the officer must select from a legally codified registry of statutory violations:</p>
+
+<pre><code class="language-json">{
+  &quot;action&quot;: &quot;REJECT_APPLICATION&quot;,
+  &quot;application_id&quot;: &quot;APP-2026-INC-49201&quot;,
+  &quot;officer_id&quot;: &quot;OFFICER-REV-4091&quot;,
+  &quot;statutory_rejection_code&quot;: &quot;STATUTE_KAR_REV_ACT_SEC_14B_INCOME_EXCEEDED&quot;,
+  &quot;statutory_legal_citation&quot;: &quot;Karnataka State Revenue Act §14(b): Certified annual income exceeds ₹2,50,000&quot;,
+  &quot;verified_evidence_ref&quot;: &quot;SHA256:4a5c6e8d... (Salary Certificate shows ₹3,40,000)&quot;,
+  &quot;officer_digital_signature&quot;: &quot;3045022100d3b...f82a&quot;,
+  &quot;timestamp&quot;: 1787886400
+}</code></pre>
+<p>Both approvals and rejections are committed to the permissioned blockchain, creating an immutable record that exposes biased rejection patterns.</p>
+
+<p>---</p>
+
+<h2>5. Autonomous Operations Intelligence & Bottleneck Detection</h2>
+
+<p>GovPulse includes a <strong>Self-Monitoring Anomaly Agent</strong> that operates 24/7 over the processing event stream:</p>
+
+<div class="mermaid">
+flowchart TD
+    EventStream[Kafka Event Stream\nIntake, OCR, Policy, Queue, Approval Timestamps] --> OpsAgent[Autonomous Operations AI Agent]
+    
+    subgraph MetricEngine["REAL-TIME METRIC TRACKING"]
+        OpsAgent --> LatencyCalc[Calculate Moving Average Latency per Stage]
+        OpsAgent --> QueueDepth[Monitor Officer Queue Depths]
+        OpsAgent --> RejectionRatio[Track Officer Rejection Anomaly Ratios]
+    end
+
+    subgraph AnomalyDetection["ANOMALY & ROOT-CAUSE ISOLATION"]
+        LatencyCalc --> AnomalyCheck{Stage Latency > 3x Baseline?}
+        AnomalyCheck -->|Yes: South District DocAI queue delayed from 1.2h to 9.4h| RootCause[Isolate Bottleneck: GPU Worker Node Outage in Zone 2]
+        AnomalyCheck -->|No: Operations Normal| GreenStatus[Green SLA Status]
+    end
+
+    subgraph AutoRemediation["AUTONOMOUS ACTION"]
+        RootCause --> TriggerAlert[Trigger Supervisor Alert]
+        RootCause --> AutoRebalance[Auto-Scale GPU Workers & Rebalance Queues]
+    end
+</div>
+
+<h3>Anomaly Diagnostic Alert Schema:</h3>
+<pre><code class="language-json">{
+  &quot;alert_id&quot;: &quot;OPS-ANOMALY-8821&quot;,
+  &quot;severity&quot;: &quot;CRITICAL&quot;,
+  &quot;detected_at&quot;: &quot;2026-08-28T03:02:00Z&quot;,
+  &quot;anomaly_type&quot;: &quot;PROCESSING_LATENCY_SPIKE&quot;,
+  &quot;affected_department&quot;: &quot;Department of Social Welfare&quot;,
+  &quot;affected_district&quot;: &quot;Bangalore South&quot;,
+  &quot;baseline_processing_time_hours&quot;: 3.2,
+  &quot;current_processing_time_hours&quot;: 18.7,
+  &quot;isolated_stage&quot;: &quot;DOCUMENT_AI_EXTRACTION&quot;,
+  &quot;root_cause_analysis&quot;: &quot;Sudden 400% surge in scanned affidavit uploads causing GPU worker queue saturation.&quot;,
+  &quot;automated_remediation_action&quot;: &quot;Spun up 4 additional LayoutLMv3 PyTorch GPU inference worker pods on Kubernetes node pool.&quot;
+}</code></pre>
+
+        </div>
+    </div>
+</body>
+</html>
